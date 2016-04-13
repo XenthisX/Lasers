@@ -61,15 +61,129 @@ public class LasersPTUI {
         System.out.println(this);
     }
 
-    public LasersPTUI(String safeFile, String inital) throws FileNotFoundException {
 
-        this(safeFile);
 
+    public void readInputFile(){
+
+    }
+
+    public void parseCommand(String str){
+        String[] line=str.split(" ");
+        String command=line[0];
+        if(command.equals("a")||command.equals("add")){
+            add(Integer.parseInt(line[1]),Integer.parseInt(line[2]));
+        }else if(command.equals("d")||command.equals("display")){
+            display();
+        }else if(command.equals("h")||command.equals("help")){
+            help();
+        }else if(command.equals("q")||command.equals("quit")){
+            quit();
+        }else if(command.equals("r")||command.equals("remove")){
+            remove(Integer.parseInt(line[1]),Integer.parseInt(line[2]));
+        }else if(command.equals("v")||command.equals("verify")){
+            verify();
+        }
+    }
+
+    public void add(int r,int c){
+        //If pillar or laser
+        if("1234LX".indexOf(grid[r][c])!=-1){
+            System.out.println("Error adding laser at: ("+r+", "+c+")");
+            display();
+        }else{
+            System.out.println("Laser added at: ("+r+", "+c+")");
+            grid[r][c]='L';
+
+            //Left
+            for(int leftIterator=c;leftIterator>=0;leftIterator--){
+                if("1234LX".indexOf(grid[r][leftIterator])!=-1){
+                    break;
+                }else{
+                    grid[r][leftIterator]='*';
+                }
+            }
+            for(int rightIterator=c;rightIterator<width;rightIterator++){
+                if("1234LX".indexOf(grid[r][rightIterator])!=-1){
+                    break;
+                }else{
+                    grid[r][rightIterator]='*';
+                }
+            }
+            for(int upIterator=r;upIterator>=0;upIterator--){
+                if("1234LX".indexOf(grid[upIterator][c])!=-1){
+                    break;
+                }else{
+                    grid[upIterator][c]='*';
+                }
+            }
+            for(int downIterator=r;downIterator<height;downIterator++){
+                if("1234LX".indexOf(grid[downIterator][c])!=-1){
+                    break;
+                }else{
+                    grid[downIterator][c]='*';
+                }
+            }
+        }
+    }
+    public void display(){
+
+    }
+    public void help(){
+        System.out.println("a|add r c: Add laser to (r,c)");
+        System.out.println("d|display: Display safe");
+        System.out.println("h|help: Print this help message");
+        System.out.println("q|quit: Exit program");
+        System.out.println("r|remove r c: Remove laser from (r,c)");
+        System.out.println("v|verify: Verify safe correctness");
+    }
+    public void quit(){
+        System.exit(0);
+    }
+    public void remove(int r,int c){
+        //If pillar or laser
+        if(grid[r][c]!='L'){
+            System.out.println("Error removing laser at: ("+r+", "+c+")");
+            display();
+        }else{
+            System.out.println("Laser removed at: ("+r+", "+c+")");
+            grid[r][c]='L';
+
+            //Left
+            for(int leftIterator=c;leftIterator>=0;leftIterator--){
+                if("1234LX".indexOf(grid[r][leftIterator])!=-1){
+                    break;
+                }else{
+                    grid[r][leftIterator]='.';
+                }
+            }
+            for(int rightIterator=c;rightIterator<width;rightIterator++){
+                if("1234LX".indexOf(grid[r][rightIterator])!=-1){
+                    break;
+                }else{
+                    grid[r][rightIterator]='.';
+                }
+            }
+            for(int upIterator=r;upIterator>=0;upIterator--){
+                if("1234LX".indexOf(grid[upIterator][c])!=-1){
+                    break;
+                }else{
+                    grid[upIterator][c]='.';
+                }
+            }
+            for(int downIterator=r;downIterator<height;downIterator++){
+                if("1234LX".indexOf(grid[downIterator][c])!=-1){
+                    break;
+                }else{
+                    grid[downIterator][c]='.';
+                }
+            }
+        }
+    }
+    public void verify(){
 
     }
 
     @Override
-    
     public String toString() { //TODO for some reason this method is outputting a mirrored top and bottom row
         String result = "  ";
         // Creates labels for the top columns
@@ -108,19 +222,14 @@ public class LasersPTUI {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-
-        switch (args.length) {
-            default:
-                System.out.println("Usage: java LasersPTUI safe-file [input]");
-                System.exit(0);
-                break;
-            case 1:
-
-                LasersPTUI lasers = new LasersPTUI(args[0]);
-                break;
-            case 2:
-                LasersPTUI lazers = new LasersPTUI(args[0], args[1]);
-                break;
+        if(args.length==0){
+            System.out.println("Usage: java LasersPTUI safe-file [input]");
+            System.exit(0);
+        }else if(args.length==1){
+            LasersPTUI lasers = new LasersPTUI(args[0]);
+        }else if(args.length==2){
+            LasersPTUI lasers = new LasersPTUI(args[0]);
+            lasers.readInputFile();
         }
 
     }
