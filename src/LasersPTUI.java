@@ -57,9 +57,8 @@ public class LasersPTUI {
                 grid[row][col] = in.next().charAt(0);
             }
         }
-
         in.close();
-
+        System.out.println(this);
     }
 
     public LasersPTUI(String safeFile, String inital) throws FileNotFoundException {
@@ -68,6 +67,44 @@ public class LasersPTUI {
 
 
     }
+
+    @Override
+    
+    public String toString() { //TODO for some reason this method is outputting a mirrored top and bottom row
+        String result = "  ";
+        // Creates labels for the top columns
+        for (int i = 0; i < width + (width - 1); i++) {
+            if (i%2 == 0) result += i/2 + " ";
+        }
+        result += "\n  ";
+        // Creates dividers for the top part of the Laser puzzle
+        for (int i = 0; i < width + (width - 1); i++) {
+            result += HORI_DIVIDE;
+        }
+        result += "\n";
+        // nested for loops to generate the visible part of the grid
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // this if creates the row numbers and left hand divider
+                if (x == 0) {
+                    result += y + "" + VERT_DIVIDE;
+                }
+
+                result += (grid[x][y]);
+
+                // this if adds spacing after every item gets placed in the puzzle
+                if (x >= 0 && x < width - 1) {
+                    result += " ";
+                }
+
+            }
+            // new line after running through the whole X line
+            result += "\n";
+        }
+        return result;
+    }
+
+
 
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -85,8 +122,6 @@ public class LasersPTUI {
                 LasersPTUI lazers = new LasersPTUI(args[0], args[1]);
                 break;
         }
-        System.out.println("My name is Stefan Marchhart");
-        System.out.println("My name is Elijah Bosley");
-        System.out.println("Our project account is p142-05l");
+
     }
 }
