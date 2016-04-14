@@ -79,6 +79,7 @@ public class LasersPTUI {
         if (command.equals("a") || command.equals("add")) {
             if (line.length != 3) {
                 System.out.println("Incorrect coordinates");
+                return;
             }
             add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
         } else if (command.equals("d") || command.equals("display")) {
@@ -90,6 +91,7 @@ public class LasersPTUI {
         } else if (command.equals("r") || command.equals("remove")) {
             if (line.length != 3) {
                 System.out.println("Incorrect coordinates");
+                return;
             }
             remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
         } else if (command.equals("v") || command.equals("verify")) {
@@ -169,7 +171,11 @@ public class LasersPTUI {
      */
     public void remove(int r, int c) {
         //If pillar or laser
-        if (grid[r][c] != 'L' || !checkCoords(r, c)) {
+        if (!checkCoords(r, c)) {
+            System.out.println("Error removing laser at: (" + r + ", " + c + ")");
+            display();
+        }
+        else if (grid[r][c] != 'L' ) {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
             display();
         } else {
