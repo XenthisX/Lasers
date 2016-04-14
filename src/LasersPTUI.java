@@ -9,10 +9,6 @@ public class LasersPTUI {
      */
     public final static char EMPTY = '.';
     /**
-     * a cell occupied with a pillar that accepts any # of lasers
-     */
-    public final static char ANYPILLAR = 'X';
-    /**
      * a cell occupied with a laser emitter
      */
     public final static char LASER = 'L';
@@ -30,9 +26,21 @@ public class LasersPTUI {
      * A vertical divider
      */
     public final static char VERT_DIVIDE = '|';
-
+    /**
+     * The status of the program, running or not
+     */
+    private static boolean running = true;
+    /**
+     * The grid, stored as a 2D char array
+     */
     private char[][] grid;
+    /**
+     * The width of the Laser Room
+     */
     private int width;
+    /**
+     * The height of the Laser Room
+     */
     private int height;
 
     /**
@@ -60,8 +68,39 @@ public class LasersPTUI {
         System.out.println(this);
     }
 
+    /**
+     * Main function, if 2 arguments are given it will parse the commands from the second input file after initializing
+     * the program with the first
+     *
+     * @param args the file / files to read in as either just the grid or the grid/ solution pair
+     * @throws FileNotFoundException
+     */
+    public static void main(String[] args) throws FileNotFoundException {
+        if (args.length == 0) {
+            System.out.println("Usage: java LasersPTUI safe-file [input]");
+            System.exit(0);
+        }
+        LasersPTUI lasers = new LasersPTUI(args[0]);
+        if (args.length == 2) {
+            lasers.readInputFile(args[1]);
+        }
 
-    public void readInputFile(String input) throws Exception {
+        Scanner in = new Scanner(System.in);
+        while (running) {
+            System.out.print("> ");
+            lasers.parseCommand(in.nextLine());
+
+        }
+
+    }
+
+    /**
+     * Read the input solution file and run parse command on every line of it
+     *
+     * @param input the name of the input file
+     * @throws FileNotFoundException
+     */
+    public void readInputFile(String input) throws FileNotFoundException {
         Scanner in = new Scanner(new File(input));
         while (in.hasNextLine()) {
             String line = in.nextLine();
@@ -70,7 +109,12 @@ public class LasersPTUI {
         }
     }
 
-    public void parseCommand(String str) throws Exception {
+    /**
+     * Parses commands, either from standard input or a provided solution file fed line by line from readInputFile
+     *
+     * @param str the string to parse
+     */
+    public void parseCommand(String str) {
         String[] line = str.split(" ");
         if (str.equals("")) {
             return;
@@ -109,11 +153,7 @@ public class LasersPTUI {
      * @return true if position is valid, false if not
      */
     public boolean checkCoords(int r, int c) {
-        if (r < 0 || r >= height || c < 0 || c >= height) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(r < 0 || r >= height || c < 0 || c >= height);
     }
 
     /**
@@ -134,13 +174,6 @@ public class LasersPTUI {
 
             System.out.println("Laser added at: (" + r + ", " + c + ")");
             grid[r][c] = 'L';
-
-            /*char t = LASER; //TODO removed temporarily / permanantly depending on how well updateBeams works
-            leftBeam(r, c, t);
-            rightBeam(r, c, t);
-            upBeam(r, c, t);
-            downBeam(r, c, t);
-            */
 
             display();
         }
@@ -174,8 +207,7 @@ public class LasersPTUI {
         if (!checkCoords(r, c)) {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
             display();
-        }
-        else if (grid[r][c] != 'L' ) {
+        } else if (grid[r][c] != 'L') {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
             display();
         } else {
@@ -191,10 +223,26 @@ public class LasersPTUI {
 
     }
 
+    /**
+     * Function to check that lasers are not intersecting with one another, using the multifunctional directionBeam
+     * function, checks assuming starting on a laser
+     *
+     * @param r the row to start verification from
+     * @param c the column to start verification from
+     * @return true if valid, false if invalid (lasers hitting other lasers)
+     */
     public boolean checkBeams(int r, int c) {
         return (!leftBeam(r, c, 'v') && !rightBeam(r, c, 'v') && !upBeam(r, c, 'v') && !downBeam(r, c, 'v'));
     }
 
+    /**
+     * Multifunction function for either placing beams, removing beams, or verifying that lasers aren't pointing at
+     * other lasers
+     * @param r the row to place / remove / verify from
+     * @param c the column to place / remove / verify from
+     * @param type the desired function, either placing (BEAM), removing (EMPTY), or verifying ('V')
+     * @return false unless there are 2 lasers touching, then returns true
+     */
     public boolean leftBeam(int r, int c, char type) {
         if (c == 0) {
             return false;
@@ -218,6 +266,14 @@ public class LasersPTUI {
         return false;
     }
 
+    /**
+     * Multifunction function for either placing beams, removing beams, or verifying that lasers aren't pointing at
+     * other lasers
+     * @param r the row to place / remove / verify from
+     * @param c the column to place / remove / verify from
+     * @param type the desired function, either placing (BEAM), removing (EMPTY), or verifying ('V')
+     * @return false unless there are 2 lasers touching, then returns true
+     */
     public boolean rightBeam(int r, int c, char type) {
         if (c == width - 1) {
             return false;
@@ -241,6 +297,14 @@ public class LasersPTUI {
         return false;
     }
 
+    /**
+     * Multifunction function for either placing beams, removing beams, or verifying that lasers aren't pointing at
+     * other lasers
+     * @param r the row to place / remove / verify from
+     * @param c the column to place / remove / verify from
+     * @param type the desired function, either placing (BEAM), removing (EMPTY), or verifying ('V')
+     * @return false unless there are 2 lasers touching, then returns true
+     */
     public boolean upBeam(int r, int c, char type) {
         if (r == 0) {
             return false;
@@ -264,6 +328,14 @@ public class LasersPTUI {
         return false;
     }
 
+    /**
+     * Multifunction function for either placing beams, removing beams, or verifying that lasers aren't pointing at
+     * other lasers
+     * @param r the row to place / remove / verify from
+     * @param c the column to place / remove / verify from
+     * @param type the desired function, either placing (BEAM), removing (EMPTY), or verifying ('V')
+     * @return false unless there are 2 lasers touching, then returns true
+     */
     public boolean downBeam(int r, int c, char type) {
         if (r == height - 1) {
             return false;
@@ -287,6 +359,12 @@ public class LasersPTUI {
         return false;
     }
 
+    /**
+     * A function to check around a pillar and figure out if there are a valid number of lasers around it
+     * @param r the row that the pillar is located at
+     * @param c the column that the pillar is located at
+     * @return the number of lasers around the pillar
+     */
     public int checkNeighbors(int r, int c) {
         int laserCount = 0;
         // check left
@@ -307,11 +385,18 @@ public class LasersPTUI {
         return laserCount;
     }
 
+    /**
+     * Display function, responsible for first updating the display of the lasers, then printing out the current
+     * solution
+     */
     public void display() {
         updateBeams();
         System.out.println(this);
     }
 
+    /**
+     * Help function, prints out the help message if help or h is entered into the command line
+     */
     public void help() {
         System.out.println("a|add r c: Add laser to (r,c)");
         System.out.println("d|display: Display safe");
@@ -321,10 +406,19 @@ public class LasersPTUI {
         System.out.println("v|verify: Verify safe correctness");
     }
 
+    /**
+     * Quits the program, first sets the running value to false, then exits
+     */
     public void quit() {
+        running = false;
         System.exit(0);
+
     }
 
+    /**
+     * Verify function, runs other verification functions (checkBeams, checkNeighbors) and if any of them do not verify
+     * returns that there was an error verifying
+     */
     public void verify() {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -360,7 +454,7 @@ public class LasersPTUI {
     }
 
     @Override
-    public String toString() { //TODO for some reason this method is outputting a mirrored top and bottom row
+    public String toString() {
         String result = "  ";
         // Creates labels for the top columns
         for (int i = 0; i < width + (width - 1); i++) {
@@ -394,25 +488,5 @@ public class LasersPTUI {
             }
         }
         return result;
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            System.out.println("Usage: java LasersPTUI safe-file [input]");
-            System.exit(0);
-        }
-        LasersPTUI lasers = new LasersPTUI(args[0]);
-        if (args.length == 2) {
-            lasers.readInputFile(args[1]);
-        }
-
-        Scanner in = new Scanner(System.in);
-        while (true) {
-            System.out.print("> ");
-            lasers.parseCommand(in.nextLine());
-
-        }
-
     }
 }
