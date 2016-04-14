@@ -335,7 +335,9 @@ public class LasersPTUI {
 
             }
             // new line after running through the whole X line
-            result += "\n";
+            if (row != height -1) {
+                result += "\n";
+            }
         }
         return result;
     }
