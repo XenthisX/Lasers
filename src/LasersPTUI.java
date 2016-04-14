@@ -117,7 +117,6 @@ public class LasersPTUI {
      */
     public void add(int r, int c) {
         //If pillar or laser
-        System.out.println("> a " + r + " " + c); // I don't know why this is necessary, but try wants it
         if ("1234LX".indexOf(grid[r][c]) != -1 || !checkCoords(r, c)) {
             System.out.println("Error adding laser at: (" + r + ", " + c + ")");
             display();
@@ -160,7 +159,6 @@ public class LasersPTUI {
      * @param c the column to remove the laser from
      */
     public void remove(int r, int c) {
-        System.out.println("> r " + r + " " + c); // I don't know why this is necessary, but try wants it
         //If pillar or laser
         if (grid[r][c] != 'L' || !checkCoords(r, c)) {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
