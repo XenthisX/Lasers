@@ -72,6 +72,9 @@ public class LasersPTUI {
 
     public void parseCommand(String str) throws Exception {
         String[] line = str.split(" ");
+        if (str.equals("")) {
+            return;
+        }
         String command = line[0];
         if (command.equals("a") || command.equals("add")) {
             if (line.length != 3) {
@@ -92,7 +95,7 @@ public class LasersPTUI {
         } else if (command.equals("v") || command.equals("verify")) {
             verify();
         } else {
-            throw new Exception("Unknown Command: ", new Throwable(line[0]));
+            System.out.println("Unrecognized command: " + str);
         }
     }
 
