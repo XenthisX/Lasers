@@ -339,6 +339,7 @@ public class LasersPTUI {
 
         }
         System.out.println("Safe is fully verified!");
+        display();
     }
 
     @Override
