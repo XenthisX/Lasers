@@ -34,8 +34,6 @@ public class LasersPTUI {
     private char[][] grid;
     private int width;
     private int height;
-    private int curRow;
-    private int curCol;
 
     /**
      * First constructor, creates a safe object when only given a safe, with no laser placements
@@ -114,71 +112,148 @@ public class LasersPTUI {
         } else {
             System.out.println("Laser added at: (" + r + ", " + c + ")");
             grid[r][c] = 'L';
-            char t='*';
-            leftBeam(r,c,t);
-            rightBeam(r,c,t);
-            upBeam(r,c,t);
-            downBeam(r,c,t);
+            char t = '*';
+            leftBeam(r, c, t);
+            rightBeam(r, c, t);
+            upBeam(r, c, t);
+            downBeam(r, c, t);
             display();
         }
     }
 
+    public void remove(int r, int c) {
+        //If pillar or laser
+        if (grid[r][c] != 'L' || !checkCoords(r, c)) {
+            System.out.println("Error removing laser at: (" + r + ", " + c + ")");
+            display();
+        } else {
+            System.out.println("Laser removed at: (" + r + ", " + c + ")");
+            char t = '.';
+            grid[r][c] = t;
+            leftBeam(r, c, t);
+            rightBeam(r, c, t);
+            upBeam(r, c, t);
+            downBeam(r, c, t);
+            display();
+        }
 
-    public void leftBeam(int r, int c,char type) {
-        if (c == 0) {
-            return;
-        }
-        for (int leftIterator = c - 1; leftIterator >= 0; leftIterator--) {
-            if ("01234LX".indexOf(grid[r][leftIterator]) != -1) {
-                break;
-            } else {
-                grid[r][leftIterator] = type;
-            }
-        }
     }
 
-    public void rightBeam(int r, int c,char type) {
+    public boolean checkBeams(int r, int c) {
+        return (!leftBeam(r, c, 'v') && !rightBeam(r, c, 'v') && !upBeam(r, c, 'v') && !downBeam(r, c, 'v'));
+    }
+
+    public boolean leftBeam(int r, int c, char type) {
+        if (c == 0) {
+            return false;
+        }
+        for (int leftIterator = c - 1; leftIterator >= 0; leftIterator--) {
+            if (type == 'v') {
+                if (grid[r][leftIterator] == LASER) {
+                    return true;
+                } else if ("01234X".indexOf(grid[r][leftIterator]) != -1) {
+                    return false;
+                }
+            } else {
+                if ("01234LX".indexOf(grid[r][leftIterator]) != -1) {
+                    break;
+                } else {
+                    grid[r][leftIterator] = type;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public boolean rightBeam(int r, int c, char type) {
         if (c == width - 1) {
-            return;
+            return false;
         }
         //right
         for (int rightIterator = c + 1; rightIterator < width; rightIterator++) {
-            if ("01234LX".indexOf(grid[r][rightIterator]) != -1) {
-                break;
+            if (type == 'v') {
+                if (grid[r][rightIterator] == LASER) {
+                    return true;
+                } else if ("01234X".indexOf(grid[r][rightIterator]) != -1) {
+                    return false;
+                }
             } else {
-                grid[r][rightIterator] = type;
+                if ("01234LX".indexOf(grid[r][rightIterator]) != -1) {
+                    break;
+                } else {
+                    grid[r][rightIterator] = type;
+                }
             }
         }
+        return false;
     }
 
-    public void upBeam(int r, int c,char type) {
+    public boolean upBeam(int r, int c, char type) {
         if (r == 0) {
-            return;
+            return false;
         }
         //up
-        for (int upIterator = r-1; upIterator >= 0; upIterator--) {
-            if ("01234LX".indexOf(grid[upIterator][c]) != -1) {
-                break;
+        for (int upIterator = r - 1; upIterator >= 0; upIterator--) {
+            if (type == 'v') {
+                if (grid[upIterator][c] == LASER) {
+                    return true;
+                } else if ("01234X".indexOf(grid[upIterator][c]) != -1) {
+                    return false;
+                }
             } else {
-                grid[upIterator][c] = type;
+                if ("01234LX".indexOf(grid[upIterator][c]) != -1) {
+                    break;
+                } else {
+                    grid[upIterator][c] = type;
+                }
             }
         }
+        return false;
     }
 
-    public void downBeam(int r, int c,char type) {
+    public boolean downBeam(int r, int c, char type) {
         if (r == height - 1) {
-            return;
+            return false;
         }
         //down
-        for (int downIterator = r+1; downIterator < height; downIterator++) {
-            if ("01234LX".indexOf(grid[downIterator][c]) != -1) {
-                break;
+        for (int downIterator = r + 1; downIterator < height; downIterator++) {
+            if (type == 'v') {
+                if (grid[downIterator][c] == LASER) {
+                    return true;
+                } else if ("01234X".indexOf(grid[downIterator][c]) != -1) {
+                    return false;
+                }
             } else {
-                grid[downIterator][c] = type;
+                if ("01234LX".indexOf(grid[downIterator][c]) != -1) {
+                    break;
+                } else {
+                    grid[downIterator][c] = type;
+                }
             }
         }
+        return false;
     }
 
+    public int checkNeighbors(int r, int c) {
+        int laserCount = 0;
+        // check left
+        if (c > 0) {
+            if (grid[r][c - 1] == 'L') laserCount++;
+        }
+        // check right
+        if (c < width - 1) {
+            if (grid[r][c + 1] == 'L') laserCount++;
+        }
+        // check up
+        if (r > 0) {
+            if (grid[r - 1][c] == 'L') laserCount++;
+        }
+        if (r < height - 1) {
+            if (grid[r + 1][c] == 'L') laserCount++;
+        }
+        return laserCount;
+    }
 
     public void display() {
         System.out.println(this);
@@ -197,26 +272,37 @@ public class LasersPTUI {
         System.exit(0);
     }
 
-    public void remove(int r, int c) {
-        //If pillar or laser
-        if (grid[r][c] != 'L' || !checkCoords(r, c)) {
-            System.out.println("Error removing laser at: (" + r + ", " + c + ")");
-            display();
-        } else {
-            System.out.println("Laser removed at: (" + r + ", " + c + ")");
-            char t='.';
-            grid[r][c] = t;
-            leftBeam(r,c,t);
-            rightBeam(r,c,t);
-            upBeam(r,c,t);
-            downBeam(r,c,t);
-            display();
-        }
-        display();
-    }
-
     public void verify() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                //Checks no aligned lasers
+                if (grid[row][col] == LASER) {
+                    if (!checkBeams(row, col)) {
+                        System.out.println("Error verifying at: (" + row + ", " + col + ")");
+                        display();
+                        return;
+                    }
+                    //Checks correct amount of emitters per pillar
+                } else if ("01234X".indexOf(grid[row][col]) != -1) {
+                    int neighbors = checkNeighbors(row, col);
+                    if (!(grid[row][col] == 'X')) {
 
+                        if (neighbors != Integer.parseInt(grid[row][col] + "")) {
+                            System.out.println("Error verifying at: (" + row + ", " + col + ")");
+                            display();
+                            return;
+                        }
+                    }
+                    //checks no more empties
+                } else if (grid[row][col] == EMPTY) {
+                    System.out.println("Error verifying at: (" + row + ", " + col + ")");
+                    display();
+                    return;
+                }
+            }
+
+        }
+        System.out.println("Safe is fully verified!");
     }
 
     @Override
