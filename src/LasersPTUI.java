@@ -96,6 +96,12 @@ public class LasersPTUI {
         }
     }
 
+    /**
+     * Verifies that the current location is valid and present in the grid
+     * @param r the row
+     * @param c the column
+     * @return true if position is valid, false if not
+     */
     public boolean checkCoords(int r, int c) {
         if (r < 0 || r >= height || c < 0 || c >= height) {
             return false;
@@ -104,6 +110,11 @@ public class LasersPTUI {
         }
     }
 
+    /**
+     * Adds a laser given a row and a column, and draws the beams from that coordinate
+     * @param r the row to add the laser to
+     * @param c the column to add the laser to
+     */
     public void add(int r, int c) {
         //If pillar or laser
         if ("1234LX".indexOf(grid[r][c]) != -1 || !checkCoords(r, c)) {
@@ -112,15 +123,39 @@ public class LasersPTUI {
         } else {
             System.out.println("Laser added at: (" + r + ", " + c + ")");
             grid[r][c] = 'L';
-            char t = '*';
+
+            /*char t = LASER; //TODO removed temporarily / permanantly depending on how well updateBeams works
             leftBeam(r, c, t);
             rightBeam(r, c, t);
             upBeam(r, c, t);
             downBeam(r, c, t);
+            */
             display();
         }
     }
 
+    /**
+     * Helper functon to run through the grid and run the beam drawing function when a laser is found.
+     */
+    public void updateBeams() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                if (grid[row][col] == LASER) {
+
+                    leftBeam(row, col, BEAM);
+                    rightBeam(row, col, BEAM);
+                    upBeam(row, col, BEAM);
+                    downBeam(row, col, BEAM);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes a laser given a row and a column, and removes the beam from the laser
+     * @param r the row to remove the laser from
+     * @param c the column to remove the laser from
+     */
     public void remove(int r, int c) {
         //If pillar or laser
         if (grid[r][c] != 'L' || !checkCoords(r, c)) {
@@ -256,6 +291,7 @@ public class LasersPTUI {
     }
 
     public void display() {
+        updateBeams();
         System.out.println(this);
     }
 
