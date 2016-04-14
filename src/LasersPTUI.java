@@ -78,7 +78,7 @@ public class LasersPTUI {
         String command = line[0];
         if (command.equals("a") || command.equals("add")) {
             if (line.length != 3) {
-                throw new Exception("Incorrect coordinates");
+                System.out.println("Incorrect coordinates");
             }
             add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
         } else if (command.equals("d") || command.equals("display")) {
@@ -89,7 +89,7 @@ public class LasersPTUI {
             quit();
         } else if (command.equals("r") || command.equals("remove")) {
             if (line.length != 3) {
-                throw new Exception("Incorrect coordinates");
+                System.out.println("Incorrect coordinates");
             }
             remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
         } else if (command.equals("v") || command.equals("verify")) {
@@ -101,6 +101,7 @@ public class LasersPTUI {
 
     /**
      * Verifies that the current location is valid and present in the grid
+     *
      * @param r the row
      * @param c the column
      * @return true if position is valid, false if not
@@ -115,12 +116,16 @@ public class LasersPTUI {
 
     /**
      * Adds a laser given a row and a column, and draws the beams from that coordinate
+     *
      * @param r the row to add the laser to
      * @param c the column to add the laser to
      */
     public void add(int r, int c) {
         //If pillar or laser
-        if ("1234LX".indexOf(grid[r][c]) != -1 || !checkCoords(r, c)) {
+        if (!checkCoords(r, c)) {
+            System.out.println("Error adding laser at: (" + r + ", " + c + ")");
+            display();
+        } else if ("1234LX".indexOf(grid[r][c]) != -1) {
             System.out.println("Error adding laser at: (" + r + ", " + c + ")");
             display();
         } else {
@@ -158,6 +163,7 @@ public class LasersPTUI {
 
     /**
      * Removes a laser given a row and a column, and removes the beam from the laser
+     *
      * @param r the row to remove the laser from
      * @param c the column to remove the laser from
      */
@@ -377,7 +383,7 @@ public class LasersPTUI {
 
             }
             // new line after running through the whole X line
-            if (row != height -1) {
+            if (row != height - 1) {
                 result += "\n";
             }
         }
