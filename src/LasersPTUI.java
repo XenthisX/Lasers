@@ -88,7 +88,7 @@ public class LasersPTUI {
         Scanner in = new Scanner(System.in);
         while (running) {
             System.out.print("> ");
-            lasers.parseCommand(in.nextLine());
+            lasers.parseCommand(in.nextLine(), false);
 
         }
 
@@ -105,7 +105,8 @@ public class LasersPTUI {
         while (in.hasNextLine()) {
             String line = in.nextLine();
 
-            parseCommand(line);
+            parseCommand(line, true);
+
         }
     }
 
@@ -114,7 +115,7 @@ public class LasersPTUI {
      *
      * @param str the string to parse
      */
-    public void parseCommand(String str) {
+    public void parseCommand(String str, boolean isFile) {
         String[] line = str.split(" ");
         if (str.equals("")) {
             return;
@@ -126,6 +127,7 @@ public class LasersPTUI {
                 return;
             }
             add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
+            if (isFile) System.out.println(">a " + line[1] + " " + line[2]);
         } else if (command.equals("d") || command.equals("display")) {
             display();
         } else if (command.equals("h") || command.equals("help")) {
@@ -138,6 +140,7 @@ public class LasersPTUI {
                 return;
             }
             remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
+            if (isFile) System.out.println(">r " + line[1] + " " + line[2]);
         } else if (command.equals("v") || command.equals("verify")) {
             verify();
         } else {
