@@ -17,7 +17,12 @@ public class LasersTextUI implements Observer {
     /**
      * Construct a LasersTextUI object
      */
-    public LasersTextUI() {
+    public LasersTextUI(String safefile) {
+        try {
+            this.model = new LasersModel(safefile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         this.model.addObserver(this);
     }
 
@@ -26,39 +31,36 @@ public class LasersTextUI implements Observer {
      *
      * @param args the file / files to read in as either just the grid or the grid/ solution pair
      */
-    public static void main(String[] args) {
-        LasersTextUI game = new LasersTextUI();
+    public static void main(String[] args) throws FileNotFoundException {
 
-        try {
-            game.runSimulation(args);
-        } catch (FileNotFoundException e) {
-            System.out.println("File: \'" + args[0] + "\' not found.");
-        }
-    }
-
-    /**
-     * Starts the simulation by running an ongoing command loop
-     */
-    private void runSimulation(String[] args) throws FileNotFoundException {
 
         if (args.length == 0) {
             System.out.println("Usage: java LasersModel safe-file [input]");
             System.exit(0);
         } else {
-            model = new LasersModel(args[0]);
+            LasersTextUI game = new LasersTextUI(args[0]);
             if (args.length == 2) {
-                this.readInputFile(args[1]);
+                game.readInputFile(args[1]);
             }
 
-            Scanner in = new Scanner(System.in);
-            while (model.isRunning()) {
-                System.out.print("> ");
-                this.parseCommand(in.nextLine(), false);
-
-            }
+            game.runSimulation();
         }
-
     }
+
+
+    /**
+     * Starts the simulation by running an ongoing command loop
+     */
+    private void runSimulation() {
+
+        Scanner in = new Scanner(System.in);
+        while (model.isRunning()) {
+            System.out.print("> ");
+            this.parseCommand(in.nextLine(), false);
+
+        }
+    }
+
 
     /**
      * Read the input solution file and run parse command on every line of it
@@ -130,7 +132,7 @@ public class LasersTextUI implements Observer {
      */
     public void display() {
         this.model.updateBeams();
-        System.out.println(this);
+        System.out.println(model);
     }
 
     /**
