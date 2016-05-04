@@ -5,7 +5,7 @@ import java.util.Observer;
 import java.util.Scanner;
 
 /**
- * Created by Elijah Bosley on 5/3/2016.
+ * TextUI client for the Lasers Puzzle
  */
 public class LasersTextUI implements Observer {
 
@@ -18,27 +18,24 @@ public class LasersTextUI implements Observer {
      * Construct a LasersTextUI object
      */
     public LasersTextUI(String safefile) {
-        try {
-            this.model = new LasersModel(safefile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        this.model = new LasersModel(safefile);
         this.model.addObserver(this);
     }
 
     /**
-     * Main function, runsthe simulation with the command line arguments
+     * Main function, runs the simulation with the command line arguments
      *
      * @param args the file / files to read in as either just the grid or the grid/ solution pair
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
 
 
         if (args.length == 0) {
             System.out.println("Usage: java LasersModel safe-file [input]");
             System.exit(0);
         } else {
-            LasersTextUI game = new LasersTextUI(args[0]);
+            String safefile = args[0];
+            LasersTextUI game = new LasersTextUI(safefile);
             if (args.length == 2) {
                 game.readInputFile(args[1]);
             }
@@ -63,13 +60,19 @@ public class LasersTextUI implements Observer {
 
 
     /**
-     * Read the input solution file and run parse command on every line of it
+     * Read the input solution file and run parse command on every line
      *
      * @param input the name of the input file
-     * @throws FileNotFoundException
      */
-    public void readInputFile(String input) throws FileNotFoundException {
-        Scanner in = new Scanner(new File(input));
+    private void readInputFile(String input) {
+
+        Scanner in = null;
+        try {
+            in = new Scanner(new File(input));
+        } catch (FileNotFoundException e) {
+            System.out.println("Safe setup file: \'" + input + "\' not found.");
+        }
+
         while (in.hasNextLine()) {
             String line = in.nextLine();
             this.parseCommand(line, true);
@@ -79,6 +82,9 @@ public class LasersTextUI implements Observer {
 
     /**
      * Reads in commands and executes them
+     *
+     * @param str    the string to parse
+     * @param isFile a boolean that if true will echo the inputted command, otherwise will not
      */
     private void parseCommand(String str, boolean isFile) {
         String[] line = str.split(" ");
@@ -105,7 +111,9 @@ public class LasersTextUI implements Observer {
                 System.out.println("Incorrect coordinates");
                 return;
             }
-            if (isFile) System.out.println("> r " + line[1] + " " + line[2]);
+            if (isFile) {
+                System.out.println("> r " + line[1] + " " + line[2]);
+            }
             this.model.remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
         } else if (command.equals("v") || command.equals("verify")) {
             this.model.verify();
@@ -117,7 +125,7 @@ public class LasersTextUI implements Observer {
     /**
      * Help function, prints out the help message if help or h is entered into the command line
      */
-    public void displayHelp() {
+    private void displayHelp() {
         System.out.println("a|add r c: Add laser to (r,c)");
         System.out.println("d|display: Display safe");
         System.out.println("h|help: Print this help message");
@@ -130,7 +138,7 @@ public class LasersTextUI implements Observer {
      * Display function, responsible for first updating the display of the lasers, then printing out the current
      * solution
      */
-    public void display() {
+    private void display() {
         this.model.updateBeams();
         System.out.println(model);
     }
@@ -146,7 +154,7 @@ public class LasersTextUI implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-
+        display();
     }
 
 

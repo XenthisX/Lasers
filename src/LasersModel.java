@@ -17,8 +17,6 @@ public class LasersModel extends Observable {
      * a cell occupied with a laser beam
      */
     public final static char BEAM = '*';
-
-    // OUTPUT CONSTANTS
     /**
      * A horizontal divider
      */
@@ -45,14 +43,18 @@ public class LasersModel extends Observable {
     private int height;
 
     /**
-     * First constructor, creates a safe object when only given a safe, with no laser placements
+     * Constructor, creates a safe object when only given a safe, with no laser placements
      *
      * @param safeFile the safe file to parse in
-     * @throws FileNotFoundException
      */
-    public LasersModel(String safeFile) throws FileNotFoundException {
+    public LasersModel(String safeFile) {
 
-        Scanner in = new Scanner(new File(safeFile));
+        Scanner in = null;
+        try {
+            in = new Scanner(new File(safeFile));
+        } catch (FileNotFoundException e) {
+            System.out.println("File: \'" + safeFile + "\' not found.");
+        }
 
         width = Integer.parseInt(in.next());
         height = Integer.parseInt(in.next());
