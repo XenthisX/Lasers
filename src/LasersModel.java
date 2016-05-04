@@ -1,8 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Observable;
 import java.util.Scanner;
 
-public class LasersPTUI {
+public class LasersModel extends Observable {
 
     /**
      * an empty cell
@@ -49,7 +50,7 @@ public class LasersPTUI {
      * @param safeFile the safe file to parse in
      * @throws FileNotFoundException
      */
-    public LasersPTUI(String safeFile) throws FileNotFoundException {
+    public LasersModel(String safeFile) throws FileNotFoundException {
 
         Scanner in = new Scanner(new File(safeFile));
 
@@ -69,84 +70,11 @@ public class LasersPTUI {
     }
 
     /**
-     * Main function, if 2 arguments are given it will parse the commands from the second input file after initializing
-     * the program with the first
-     *
-     * @param args the file / files to read in as either just the grid or the grid/ solution pair
-     * @throws FileNotFoundException
+     * Function to return if simulation is running
+     * @return is the simulation running?
      */
-    public static void main(String[] args) throws FileNotFoundException {
-        if (args.length == 0) {
-            System.out.println("Usage: java LasersPTUI safe-file [input]");
-            System.exit(0);
-        }
-        LasersPTUI lasers = new LasersPTUI(args[0]);
-        if (args.length == 2) {
-            lasers.readInputFile(args[1]);
-        }
-
-        Scanner in = new Scanner(System.in);
-        while (running) {
-            System.out.print("> ");
-            lasers.parseCommand(in.nextLine(), false);
-
-        }
-
-    }
-
-    /**
-     * Read the input solution file and run parse command on every line of it
-     *
-     * @param input the name of the input file
-     * @throws FileNotFoundException
-     */
-    public void readInputFile(String input) throws FileNotFoundException {
-        Scanner in = new Scanner(new File(input));
-        while (in.hasNextLine()) {
-            String line = in.nextLine();
-
-            parseCommand(line, true);
-
-        }
-    }
-
-    /**
-     * Parses commands, either from standard input or a provided solution file fed line by line from readInputFile
-     *
-     * @param str the string to parse
-     */
-    public void parseCommand(String str, boolean isFile) {
-        String[] line = str.split(" ");
-        if (str.equals("")) {
-            return;
-        }
-        String command = line[0];
-        if (command.equals("a") || command.equals("add")) {
-            if (line.length != 3) {
-                System.out.println("Incorrect coordinates");
-                return;
-            }
-            if (isFile) System.out.println("> a " + line[1] + " " + line[2]);
-            add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
-            //if (isFile) System.out.println("> a " + line[1] + " " + line[2]);
-        } else if (command.equals("d") || command.equals("display")) {
-            display();
-        } else if (command.equals("h") || command.equals("help")) {
-            help();
-        } else if (command.equals("q") || command.equals("quit")) {
-            quit();
-        } else if (command.equals("r") || command.equals("remove")) {
-            if (line.length != 3) {
-                System.out.println("Incorrect coordinates");
-                return;
-            }
-            if (isFile) System.out.println("> r " + line[1] + " " + line[2]);
-            remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
-        } else if (command.equals("v") || command.equals("verify")) {
-            verify();
-        } else {
-            System.out.println("Unrecognized command: " + str);
-        }
+    public boolean isRunning() {
+        return running;
     }
 
     /**
@@ -170,16 +98,19 @@ public class LasersPTUI {
         //If pillar or laser
         if (!checkCoords(r, c)) {
             System.out.println("Error adding laser at: (" + r + ", " + c + ")");
-            display();
+            setChanged();
+            notifyObservers();
         } else if ("1234LX".indexOf(grid[r][c]) != -1) {
             System.out.println("Error adding laser at: (" + r + ", " + c + ")");
-            display();
+            setChanged();
+            notifyObservers();
         } else {
 
             System.out.println("Laser added at: (" + r + ", " + c + ")");
             grid[r][c] = 'L';
 
-            display();
+            setChanged();
+            notifyObservers();
         }
     }
 
@@ -210,10 +141,12 @@ public class LasersPTUI {
         //If pillar or laser
         if (!checkCoords(r, c)) {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
-            display();
+            setChanged();
+            notifyObservers();
         } else if (grid[r][c] != 'L') {
             System.out.println("Error removing laser at: (" + r + ", " + c + ")");
-            display();
+            setChanged();
+            notifyObservers();
         } else {
             System.out.println("Laser removed at: (" + r + ", " + c + ")");
             char t = '.';
@@ -222,7 +155,8 @@ public class LasersPTUI {
             rightBeam(r, c, t);
             upBeam(r, c, t);
             downBeam(r, c, t);
-            display();
+            setChanged();
+            notifyObservers();
         }
 
     }
@@ -389,26 +323,6 @@ public class LasersPTUI {
         return laserCount;
     }
 
-    /**
-     * Display function, responsible for first updating the display of the lasers, then printing out the current
-     * solution
-     */
-    public void display() {
-        updateBeams();
-        System.out.println(this);
-    }
-
-    /**
-     * Help function, prints out the help message if help or h is entered into the command line
-     */
-    public void help() {
-        System.out.println("a|add r c: Add laser to (r,c)");
-        System.out.println("d|display: Display safe");
-        System.out.println("h|help: Print this help message");
-        System.out.println("q|quit: Exit program");
-        System.out.println("r|remove r c: Remove laser from (r,c)");
-        System.out.println("v|verify: Verify safe correctness");
-    }
 
     /**
      * Quits the program, first sets the running value to false, then exits
@@ -430,7 +344,8 @@ public class LasersPTUI {
                 if (grid[row][col] == LASER) {
                     if (!checkBeams(row, col)) {
                         System.out.println("Error verifying at: (" + row + ", " + col + ")");
-                        display();
+                        setChanged();
+                        notifyObservers();
                         return;
                     }
                     //Checks correct amount of emitters per pillar
@@ -440,21 +355,24 @@ public class LasersPTUI {
 
                         if (neighbors != Integer.parseInt(grid[row][col] + "")) {
                             System.out.println("Error verifying at: (" + row + ", " + col + ")");
-                            display();
+                            setChanged();
+                            notifyObservers();
                             return;
                         }
                     }
                     //checks no more empties
                 } else if (grid[row][col] == EMPTY) {
                     System.out.println("Error verifying at: (" + row + ", " + col + ")");
-                    display();
+                    setChanged();
+                    notifyObservers();
                     return;
                 }
             }
 
         }
         System.out.println("Safe is fully verified!");
-        display();
+        setChanged();
+        notifyObservers();
     }
 
     @Override
