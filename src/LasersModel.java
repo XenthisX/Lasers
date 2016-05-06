@@ -433,7 +433,7 @@ public class LasersModel extends Observable {
         } else if (command.equals("v") || command.equals("verify")) {
             this.verify();
         } else {
-            notifyObservers("Unrecognized command: " + str);\
+            notifyObservers("Unrecognized command: " + str);
         }
     }
 
