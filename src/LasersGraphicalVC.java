@@ -16,7 +16,7 @@ import java.util.Observer;
  */
 public class LasersGraphicalVC extends Application implements Observer {
 
-    private LasersModel model;
+    public LasersModel model;
 
     private Label title;
     private GridPane board;
@@ -107,6 +107,7 @@ public class LasersGraphicalVC extends Application implements Observer {
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
         return buttonBox;
     }
+
 
     /**
      * This method is called whenever the observed object is changed. An

@@ -377,6 +377,66 @@ public class LasersModel extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Read the input solution file and run parse command on every line
+     *
+     * @param input the name of the input file
+     */
+    public void readInputFile(String input) {
+
+        Scanner in = null;
+        try {
+            in = new Scanner(new File(input));
+        } catch (FileNotFoundException e) {
+            System.out.println("Safe setup file: \'" + input + "\' not found.");
+        }
+
+        while (in.hasNextLine()) {
+            String line = in.nextLine();
+            this.parseCommand(line);
+
+        }
+    }
+
+    /**
+     * Reads in commands and executes them
+     *
+     * @param str the string to parse
+     */
+    private void parseCommand(String str) {
+        String[] line = str.split(" ");
+        if (str.equals("")) {
+            return;
+        }
+        String command = line[0];
+        if (command.equals("a") || command.equals("add")) {
+            if (line.length != 3) {
+                System.out.println("Incorrect coordinates");
+                return;
+            }
+            this.add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
+            //if (isFile) System.out.println("> a " + line[1] + " " + line[2]);
+        } else if (command.equals("d") || command.equals("display")) {
+            setChanged();
+            notifyObservers();
+        } else if (command.equals("h") || command.equals("help")) {
+            setChanged();
+            notifyObservers("help");
+        } else if (command.equals("q") || command.equals("quit")) {
+            this.quit();
+        } else if (command.equals("r") || command.equals("remove")) {
+            if (line.length != 3) {
+                notifyObservers("incorrect coordinates");
+                return;
+            }
+            this.remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
+        } else if (command.equals("v") || command.equals("verify")) {
+            this.verify();
+        } else {
+            notifyObservers("Unrecognized command: " + str);\
+        }
+    }
+
     @Override
     public String toString() {
         String result = "  ";

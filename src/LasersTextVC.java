@@ -12,7 +12,7 @@ public class LasersTextVC implements Observer {
     /**
      * The underlying model
      */
-    private LasersModel model;
+    public LasersModel model;
 
     /**
      * Construct a LasersTextVC object
@@ -48,7 +48,7 @@ public class LasersTextVC implements Observer {
     /**
      * Starts the simulation by running an ongoing command loop
      */
-    private void runSimulation() {
+    public void runSimulation() {
 
         Scanner in = new Scanner(System.in);
         while (model.isRunning()) {
@@ -64,7 +64,7 @@ public class LasersTextVC implements Observer {
      *
      * @param input the name of the input file
      */
-    private void readInputFile(String input) {
+    public void readInputFile(String input) {
 
         Scanner in = null;
         try {
