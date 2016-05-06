@@ -22,13 +22,19 @@ public class LasersGraphicalVC extends Application implements Observer {
     private GridPane board;
     private HBox buttons;
 
+
+    public LasersGraphicalVC(String safefile) {
+        this.model = new LasersModel(safefile);
+        this.model.addObserver(this);
+
+    }
+
     /**
      * Launches application
-     *
      * @param args command line args
      */
     public static void main(String[] args) {
-        LasersGraphicalVC game = new LasersGraphicalVC();
+        LasersGraphicalVC game = new LasersGraphicalVC(args[0]);
         Application.launch(args);
     }
 
@@ -86,11 +92,13 @@ public class LasersGraphicalVC extends Application implements Observer {
      */
     private GridPane createGrid() {
         GridPane board = new GridPane();
+
         return board;
     }
 
     private HBox createButtons() {
         HBox buttonBox = new HBox();
+        buttonBox.setSpacing(5);
         Button check = new Button("Check");
         Button hint = new Button("Hint");
         Button solve = new Button("Solve");
@@ -113,4 +121,5 @@ public class LasersGraphicalVC extends Application implements Observer {
     public void update(Observable o, Object arg) {
 
     }
+
 }
