@@ -7,7 +7,7 @@ import java.util.Scanner;
 /**
  * TextUI client for the Lasers Puzzle
  */
-public class LasersTextUI implements Observer {
+public class LasersTextVC implements Observer {
 
     /**
      * The underlying model
@@ -15,9 +15,9 @@ public class LasersTextUI implements Observer {
     private LasersModel model;
 
     /**
-     * Construct a LasersTextUI object
+     * Construct a LasersTextVC object
      */
-    public LasersTextUI(String safefile) {
+    public LasersTextVC(String safefile) {
         this.model = new LasersModel(safefile);
         this.model.addObserver(this);
     }
@@ -35,7 +35,7 @@ public class LasersTextUI implements Observer {
             System.exit(0);
         } else {
             String safefile = args[0];
-            LasersTextUI game = new LasersTextUI(safefile);
+            LasersTextVC game = new LasersTextVC(safefile);
             if (args.length == 2) {
                 game.readInputFile(args[1]);
             }
