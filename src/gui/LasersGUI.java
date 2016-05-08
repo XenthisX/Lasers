@@ -12,9 +12,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.LasersModel;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
@@ -184,7 +186,25 @@ public class LasersGUI extends Application implements Observer {
         Button solve = new Button("Solve");
         Button restart = new Button("Restart");
         Button load = new Button("Load");
+        load.setOnAction(MouseEvent -> loadNew());
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
         return buttonBox;
+    }
+
+    private void loadNew() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Safe File");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(new Stage());
+
+        try {
+            String filename = file.getPath();
+            this.model = new LasersModel(filename);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 }
