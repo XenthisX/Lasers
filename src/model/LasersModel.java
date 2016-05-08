@@ -375,6 +375,16 @@ public class LasersModel extends Observable {
         return this.grid[row][col];
     }
 
+    public void reset() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                if ("01234X".indexOf(grid[row][col]) == -1) {
+                    grid[row][col] = '.';
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
         String result = "  ";

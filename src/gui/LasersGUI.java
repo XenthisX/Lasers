@@ -166,6 +166,7 @@ public class LasersGUI extends Application implements Observer {
         Button hint = new Button("Hint");
         Button solve = new Button("Solve");
         Button restart = new Button("Restart");
+        restart.setOnAction(MouseEvent -> reset());
         Button load = new Button("Load");
         load.setOnAction(MouseEvent -> loadNew());
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
@@ -196,7 +197,7 @@ public class LasersGUI extends Application implements Observer {
      * Function to reset the board, called when the restart button is pressed.
      */
     private void reset() {
-        //TODO model.reset();
+        model.reset();
         loadBoard();
     }
 
@@ -255,7 +256,6 @@ public class LasersGUI extends Application implements Observer {
         RectangleGrid rect = (RectangleGrid) stack.getChildren().get(0);
         Text text = (Text) stack.getChildren().get(1);
         Character curr = this.model.getGrid(rect.getRow(), rect.getCol());
-        System.out.println(model);
         if (curr == 'L') {
             this.model.remove(rect.getRow(), rect.getCol());
             rect.setFill(Color.LIGHTGRAY);
