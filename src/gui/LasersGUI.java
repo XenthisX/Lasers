@@ -147,7 +147,14 @@ public class LasersGUI extends Application implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         System.out.println(arg);
+        updateBoard();
         // TODO
+    }
+
+    private void updateBoard() {
+        model.updateBeams();
+        loadBoard();
+
     }
 
     private HBox createButtons() {
@@ -196,7 +203,7 @@ public class LasersGUI extends Application implements Observer {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = 50;
-                int arc = tileSize / 4;
+                int arc = 20;
                 StackPane stack = new StackPane();
                 RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.LIGHTGRAY, row, col);
                 Text text = new Text("");
@@ -204,15 +211,26 @@ public class LasersGUI extends Application implements Observer {
                 text.setBoundsType(TextBoundsType.VISUAL);
                 rect.setArcHeight(arc);
                 rect.setArcWidth(arc);
-                if (this.model.getGrid(row, col) != '.') {
+                if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
                     rect.setFill(Color.BLACK);
-
                     if (this.model.getGrid(row, col) != 'X') {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
                     text.setFill(Color.WHITE);
 
                 } else {
+                    if (this.model.getGrid(row, col) == '*') {
+                        text.setText("*");
+                        text.setFill(Color.RED);
+                        text.setEffect(new GaussianBlur());
+                    } else if (this.model.getGrid(row, col) == 'L') {
+                        Image laser = new Image("gui/resources/laser.png");
+                        ImagePattern fill = new ImagePattern(laser);
+                        rect.setFill(fill);
+                        text.setText("*");
+                        text.setEffect(new GaussianBlur());
+                        text.setFill(Color.RED);
+                    }
                     stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
                 }
                 stack.getChildren().add(rect);
