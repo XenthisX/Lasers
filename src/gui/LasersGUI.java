@@ -4,11 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -38,6 +39,8 @@ public class LasersGUI extends Application implements Observer {
      * The UI's connection to the model
      */
     private LasersModel model;
+
+    private GridPane board;
 
     @Override
     public void init() throws Exception {
@@ -117,7 +120,10 @@ public class LasersGUI extends Application implements Observer {
         title.managedProperty().bind(title.visibleProperty());
 
         /** Set up grid */
-        GridPane board = createGrid();
+        board = new GridPane();
+        board.setVgap(5);
+        board.setHgap(5);
+        loadBoard();
         main.setCenter(board);
         board.managedProperty().bind(board.visibleProperty());
 
@@ -140,42 +146,8 @@ public class LasersGUI extends Application implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        System.out.println(arg);
         // TODO
-    }
-
-    /**
-     * Creates and returns a grid pane containing the laser object
-     *
-     * @return a gridPane that contains the laser board
-     */
-    private GridPane createGrid() {
-        GridPane board = new GridPane();
-        board.setHgap(5);
-        board.setVgap(5);
-        for (int row = 0; row < this.model.getHeight(); row++) {
-            for (int col = 0; col < this.model.getWidth(); col++) {
-                int tileSize = 50;
-                int arc = tileSize / 4;
-                StackPane stack = new StackPane();
-                Rectangle rect = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
-                rect.setArcHeight(arc);
-                rect.setArcWidth(arc);
-                if (this.model.getGrid(row, col) != '.') {
-                    rect.setFill(Color.BLACK);
-                    Text text = new Text("" + this.model.getGrid(row, col));
-                    text.setFill(Color.WHITE);
-                    text.setFont(new Font("Arial", tileSize - 5));
-                    text.setBoundsType(TextBoundsType.VISUAL);
-                    stack.getChildren().add(rect);
-                    stack.getChildren().add(text);
-                } else {
-                    stack.getChildren().add(rect);
-                }
-
-                board.add(stack, col, row);
-            }
-        }
-        return board;
     }
 
     private HBox createButtons() {
@@ -201,9 +173,78 @@ public class LasersGUI extends Application implements Observer {
         try {
             String filename = file.getPath();
             this.model = new LasersModel(filename);
+            loadBoard();
 
         } catch (Exception e) {
             System.out.println(e);
+        }
+
+    }
+
+    /**
+     * Function to reset the board, called when the restart button is pressed.
+     */
+    private void reset() {
+        loadBoard();
+    }
+
+    /**
+     * Function that loads the board into the GridPane board object. This is used on the redraw of the board as well
+     * as on the initial initialization of the program.
+     */
+    private void loadBoard() {
+        for (int row = 0; row < this.model.getHeight(); row++) {
+            for (int col = 0; col < this.model.getWidth(); col++) {
+                int tileSize = 50;
+                int arc = tileSize / 4;
+                StackPane stack = new StackPane();
+                RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.LIGHTGRAY, row, col);
+                Text text = new Text("");
+                text.setFont(new Font("Arial", tileSize - 5));
+                text.setBoundsType(TextBoundsType.VISUAL);
+                rect.setArcHeight(arc);
+                rect.setArcWidth(arc);
+                if (this.model.getGrid(row, col) != '.') {
+                    rect.setFill(Color.BLACK);
+
+                    if (this.model.getGrid(row, col) != 'X') {
+                        text.setText(this.model.getGrid(row, col) + "");
+                    }
+                    text.setFill(Color.WHITE);
+
+                } else {
+                    stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
+                }
+                stack.getChildren().add(rect);
+                stack.getChildren().add(text);
+                board.add(stack, col, row);
+            }
+        }
+    }
+
+    /**
+     * Given a RectangleGrid object will check the position and add a laser to the model, as well as changing the
+     * icon to a laser or back to the blank icon
+     *
+     * @param stack the stack object to change
+     */
+    private void updateLaser(StackPane stack) {
+        RectangleGrid rect = (RectangleGrid) stack.getChildren().get(0);
+        Text text = (Text) stack.getChildren().get(1);
+        Character curr = this.model.getGrid(rect.getRow(), rect.getCol());
+        System.out.println(model);
+        if (curr == 'L') {
+            this.model.remove(rect.getRow(), rect.getCol());
+            rect.setFill(Color.LIGHTGRAY);
+            text.setText("");
+        } else if (curr == '.') {
+            this.model.add(rect.getRow(), rect.getCol());
+            Image laser = new Image("gui/resources/laser.png");
+            ImagePattern fill = new ImagePattern(laser);
+            rect.setFill(fill);
+            text.setText("*");
+            text.setEffect(new GaussianBlur());
+            text.setFill(Color.RED);
         }
 
     }

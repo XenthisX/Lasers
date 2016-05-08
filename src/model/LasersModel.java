@@ -374,4 +374,41 @@ public class LasersModel extends Observable {
     public char getGrid(int row, int col) {
         return this.grid[row][col];
     }
+
+    @Override
+    public String toString() {
+        String result = "  ";
+        // Creates labels for the top columns
+        for (int i = 0; i < width + (width - 1); i++) {
+            if (i % 2 == 0) result += i / 2 + " ";
+        }
+        result += "\n  ";
+        // Creates dividers for the top part of the Laser puzzle
+        for (int i = 0; i < width + (width - 1); i++) {
+            result += "-";
+        }
+        result += "\n";
+        // nested for loops to generate the visible part of the grid
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                // this if creates the row numbers and left hand divider
+                if (col == 0) {
+                    result += row + "" + "|";
+                }
+
+                result += (grid[row][col]);
+
+                // this if adds spacing after every item gets placed in the puzzle
+                if (col >= 0 && col < width - 1) {
+                    result += " ";
+                }
+
+            }
+            // new line after running through the whole X line
+            if (row != height - 1) {
+                result += "\n";
+            }
+        }
+        return result;
+    }
 }
