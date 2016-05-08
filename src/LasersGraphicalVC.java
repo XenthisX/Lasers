@@ -23,7 +23,6 @@ public class LasersGraphicalVC extends Application implements Observer {
     private GridPane board;
     private HBox buttons;
 
-
     public LasersGraphicalVC() {
 
     }
@@ -83,9 +82,8 @@ public class LasersGraphicalVC extends Application implements Observer {
     }
 
     /**
-     * Creates and returns a grid pane containing the laser objects
-     *
-     * @return
+     * Creates and returns a grid pane containing the laser object
+     * @return a gridPane that contains the laser board
      */
     private GridPane createGrid() {
         GridPane board = new GridPane();
