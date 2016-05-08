@@ -39,6 +39,7 @@ public class ControllerPTUI {
         if (inputFile != null) {
             readInputFile(inputFile);
         }
+        model.announceChange();
         Scanner in = new Scanner(System.in);
         while (model.isRunning()) {
             System.out.print("> ");

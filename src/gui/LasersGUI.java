@@ -3,9 +3,15 @@ package gui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import model.LasersModel;
 
@@ -94,13 +100,31 @@ public class LasersGUI extends Application implements Observer {
     }
 
     /**
-     * The
+     * Initialization function to add components to the stage
      *
      * @param stage the stage to add UI components into
      */
     private void init(Stage stage) {
         // TODO
-        buttonDemo(stage);  // this can be removed/altered
+        BorderPane main = new BorderPane();
+
+        /** Set up title */
+        Label title = new Label("Welcome to the LasersGUI");
+        title.setFont(new Font("Helvectiva", 15));
+        main.setTop(title);
+        title.managedProperty().bind(title.visibleProperty());
+
+        /** Set up grid */
+        GridPane board = createGrid();
+        main.setCenter(board);
+        board.managedProperty().bind(board.visibleProperty());
+
+        /** Add buttons */
+        HBox buttons = createButtons();
+        main.setBottom(buttons);
+
+        stage.setScene(new Scene(main));
+        //buttonDemo(stage);  // this can be removed/altered
     }
 
     @Override
@@ -115,5 +139,52 @@ public class LasersGUI extends Application implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         // TODO
+    }
+
+    /**
+     * Creates and returns a grid pane containing the laser object
+     *
+     * @return a gridPane that contains the laser board
+     */
+    private GridPane createGrid() {
+        GridPane board = new GridPane();
+        board.setHgap(5);
+        board.setVgap(5);
+        for (int row = 0; row < this.model.getHeight(); row++) {
+            for (int col = 0; col < this.model.getWidth(); col++) {
+                int tileSize = 50;
+                int arc = tileSize / 4;
+                StackPane stack = new StackPane();
+                Rectangle rect = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
+                rect.setArcHeight(arc);
+                rect.setArcWidth(arc);
+                if (this.model.getGrid(row, col) != '.') {
+                    rect.setFill(Color.BLACK);
+                    Text text = new Text("" + this.model.getGrid(row, col));
+                    text.setFill(Color.WHITE);
+                    text.setFont(new Font("Arial", tileSize - 5));
+                    text.setBoundsType(TextBoundsType.VISUAL);
+                    stack.getChildren().add(rect);
+                    stack.getChildren().add(text);
+                } else {
+                    stack.getChildren().add(rect);
+                }
+
+                board.add(stack, col, row);
+            }
+        }
+        return board;
+    }
+
+    private HBox createButtons() {
+        HBox buttonBox = new HBox();
+        buttonBox.setSpacing(2);
+        Button check = new Button("Check");
+        Button hint = new Button("Hint");
+        Button solve = new Button("Solve");
+        Button restart = new Button("Restart");
+        Button load = new Button("Load");
+        buttonBox.getChildren().addAll(check, hint, solve, restart, load);
+        return buttonBox;
     }
 }

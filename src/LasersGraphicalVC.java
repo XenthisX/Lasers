@@ -23,10 +23,6 @@ public class LasersGraphicalVC extends Application implements Observer {
     private GridPane board;
     private HBox buttons;
 
-    public LasersGraphicalVC() {
-
-    }
-
 
     /**
      * The main entry point for all JavaFX applications.
@@ -49,7 +45,7 @@ public class LasersGraphicalVC extends Application implements Observer {
         // Initially we need to read in the safeFile and setup the model using it.
         final List<String> params = getParameters().getRaw();
         String safeFile = params.get(1);
-        model = new LasersModel(safeFile);
+        this.model = new LasersModel(safeFile);
 
         /** Sets up a BorderPane to contain the Lasers Grid */
         BorderPane main = new BorderPane();
