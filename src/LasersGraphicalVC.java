@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,27 +17,17 @@ import java.util.Observer;
  */
 public class LasersGraphicalVC extends Application implements Observer {
 
-    public LasersModel model;
 
+    public LasersModel model;
     private Label title;
     private GridPane board;
     private HBox buttons;
 
 
-    public LasersGraphicalVC(String safefile) {
-        this.model = new LasersModel(safefile);
-        this.model.addObserver(this);
+    public LasersGraphicalVC() {
 
     }
 
-    /**
-     * Launches application
-     * @param args command line args
-     */
-    public static void main(String[] args) {
-        LasersGraphicalVC game = new LasersGraphicalVC(args[0]);
-        Application.launch(args);
-    }
 
     /**
      * The main entry point for all JavaFX applications.
@@ -56,6 +47,12 @@ public class LasersGraphicalVC extends Application implements Observer {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        // Initially we need to read in the safeFile and setup the model using it.
+        final List<String> params = getParameters().getRaw();
+        String safeFile = params.get(1);
+        model = new LasersModel(safeFile);
+
+        /** Sets up a BorderPane to contain the Lasers Grid */
         BorderPane main = new BorderPane();
         primaryStage.setResizable(true);
         primaryStage.setTitle("Lasers");

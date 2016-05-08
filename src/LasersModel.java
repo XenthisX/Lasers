@@ -67,8 +67,6 @@ public class LasersModel extends Observable {
             }
         }
         in.close();
-
-        System.out.println(this);
     }
 
     /**
@@ -99,20 +97,15 @@ public class LasersModel extends Observable {
     public void add(int r, int c) {
         //If pillar or laser
         if (!checkCoords(r, c)) {
-            System.out.println("Error adding laser at: (" + r + ", " + c + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
         } else if ("1234LX".indexOf(grid[r][c]) != -1) {
-            System.out.println("Error adding laser at: (" + r + ", " + c + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
         } else {
-
-            System.out.println("Laser added at: (" + r + ", " + c + ")");
             grid[r][c] = 'L';
-
             setChanged();
-            notifyObservers();
+            notifyObservers("Laser added at: (" + r + ", " + c + ")");
         }
     }
 
@@ -142,15 +135,12 @@ public class LasersModel extends Observable {
     public void remove(int r, int c) {
         //If pillar or laser
         if (!checkCoords(r, c)) {
-            System.out.println("Error removing laser at: (" + r + ", " + c + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("Error removing laser at: (" + r + ", " + c + ")");
         } else if (grid[r][c] != 'L') {
-            System.out.println("Error removing laser at: (" + r + ", " + c + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("Error removing laser at: (" + r + ", " + c + ")");
         } else {
-            System.out.println("Laser removed at: (" + r + ", " + c + ")");
             char t = '.';
             grid[r][c] = t;
             leftBeam(r, c, t);
@@ -158,7 +148,7 @@ public class LasersModel extends Observable {
             upBeam(r, c, t);
             downBeam(r, c, t);
             setChanged();
-            notifyObservers();
+            notifyObservers("Laser removed at: (" + r + ", " + c + ")");
         }
 
     }
@@ -345,9 +335,8 @@ public class LasersModel extends Observable {
                 //Checks no aligned lasers
                 if (grid[row][col] == LASER) {
                     if (!checkBeams(row, col)) {
-                        System.out.println("Error verifying at: (" + row + ", " + col + ")");
                         setChanged();
-                        notifyObservers();
+                        notifyObservers("Error verifying at: (" + row + ", " + col + ")");
                         return;
                     }
                     //Checks correct amount of emitters per pillar
@@ -356,89 +345,25 @@ public class LasersModel extends Observable {
                     if (!(grid[row][col] == 'X')) {
 
                         if (neighbors != Integer.parseInt(grid[row][col] + "")) {
-                            System.out.println("Error verifying at: (" + row + ", " + col + ")");
                             setChanged();
-                            notifyObservers();
+                            notifyObservers("Error verifying at: (" + row + ", " + col + ")");
                             return;
                         }
                     }
                     //checks no more empties
                 } else if (grid[row][col] == EMPTY) {
-                    System.out.println("Error verifying at: (" + row + ", " + col + ")");
                     setChanged();
-                    notifyObservers();
+                    notifyObservers("Error verifying at: (" + row + ", " + col + ")");
                     return;
                 }
             }
 
         }
-        System.out.println("Safe is fully verified!");
         setChanged();
-        notifyObservers();
+        notifyObservers("Safe is fully verified!");
     }
 
-    /**
-     * Read the input solution file and run parse command on every line
-     *
-     * @param input the name of the input file
-     */
-    public void readInputFile(String input) {
-
-        Scanner in = null;
-        try {
-            in = new Scanner(new File(input));
-        } catch (FileNotFoundException e) {
-            System.out.println("Safe setup file: \'" + input + "\' not found.");
-        }
-
-        while (in.hasNextLine()) {
-            String line = in.nextLine();
-            this.parseCommand(line);
-
-        }
-    }
-
-    /**
-     * Reads in commands and executes them
-     *
-     * @param str the string to parse
-     */
-    private void parseCommand(String str) {
-        String[] line = str.split(" ");
-        if (str.equals("")) {
-            return;
-        }
-        String command = line[0];
-        if (command.equals("a") || command.equals("add")) {
-            if (line.length != 3) {
-                System.out.println("Incorrect coordinates");
-                return;
-            }
-            this.add(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
-            //if (isFile) System.out.println("> a " + line[1] + " " + line[2]);
-        } else if (command.equals("d") || command.equals("display")) {
-            setChanged();
-            notifyObservers();
-        } else if (command.equals("h") || command.equals("help")) {
-            setChanged();
-            notifyObservers("help");
-        } else if (command.equals("q") || command.equals("quit")) {
-            this.quit();
-        } else if (command.equals("r") || command.equals("remove")) {
-            if (line.length != 3) {
-                notifyObservers("incorrect coordinates");
-                return;
-            }
-            this.remove(Integer.parseInt(line[1]), Integer.parseInt(line[2]));
-        } else if (command.equals("v") || command.equals("verify")) {
-            this.verify();
-        } else {
-            notifyObservers("Unrecognized command: " + str);
-        }
-    }
-
-    @Override
-    public String toString() {
+    public String getDisplay() {
         String result = "  ";
         // Creates labels for the top columns
         for (int i = 0; i < width + (width - 1); i++) {

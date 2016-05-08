@@ -39,7 +39,6 @@ public class LasersTextVC implements Observer {
             if (args.length == 2) {
                 game.readInputFile(args[1]);
             }
-
             game.runSimulation();
         }
     }
@@ -49,7 +48,7 @@ public class LasersTextVC implements Observer {
      * Starts the simulation by running an ongoing command loop
      */
     public void runSimulation() {
-
+        this.display();
         Scanner in = new Scanner(System.in);
         while (model.isRunning()) {
             System.out.print("> ");
@@ -65,14 +64,12 @@ public class LasersTextVC implements Observer {
      * @param input the name of the input file
      */
     public void readInputFile(String input) {
-
         Scanner in = null;
         try {
             in = new Scanner(new File(input));
         } catch (FileNotFoundException e) {
             System.out.println("Safe setup file: \'" + input + "\' not found.");
         }
-
         while (in.hasNextLine()) {
             String line = in.nextLine();
             this.parseCommand(line, true);
@@ -140,7 +137,7 @@ public class LasersTextVC implements Observer {
      */
     private void display() {
         this.model.updateBeams();
-        System.out.println(model);
+        System.out.println(model.getDisplay());
     }
 
     /**
@@ -154,6 +151,7 @@ public class LasersTextVC implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
+        System.out.println(arg);
         display();
     }
 

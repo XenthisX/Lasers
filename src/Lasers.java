@@ -22,15 +22,11 @@ public class Lasers {
                 case "ptui":
                     LasersTextVC textGame = new LasersTextVC(safefile);
                     if (args.length == 3) {
-                        textGame.model.readInputFile(args[1]);
+                        textGame.readInputFile(args[1]);
                     }
                     textGame.runSimulation();
                 case "gui":
-                    LasersGraphicalVC guiGame = new LasersGraphicalVC(safefile);
-                    if (args.length == 3) {
-                        guiGame.model.readInputFile(args[1]);
-                    }
-                    Application.launch(args);
+                    Application.launch(LasersGraphicalVC.class, args);
             }
 
         }
