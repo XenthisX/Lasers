@@ -85,7 +85,7 @@ public class LasersModel extends Observable {
         if (!checkCoords(r, c)) {
             setChanged();
             notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
-        } else if ("1234LX".indexOf(grid[r][c]) != -1) {
+        } else if ("01234LX".indexOf(grid[r][c]) != -1) {
             setChanged();
             notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
         } else {

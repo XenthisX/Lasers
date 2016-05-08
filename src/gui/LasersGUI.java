@@ -41,6 +41,7 @@ public class LasersGUI extends Application implements Observer {
     private LasersModel model;
 
     private GridPane board;
+    private Label title;
 
     @Override
     public void init() throws Exception {
@@ -114,7 +115,7 @@ public class LasersGUI extends Application implements Observer {
         BorderPane main = new BorderPane();
 
         /** Set up title */
-        Label title = new Label("Welcome to the LasersGUI");
+        title = new Label("Welcome to the LasersGUI");
         title.setFont(new Font("Helvectiva", 15));
         main.setTop(title);
         title.managedProperty().bind(title.visibleProperty());
@@ -146,7 +147,7 @@ public class LasersGUI extends Application implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(arg);
+        title.setText((String) arg);
         updateBoard();
         // TODO
     }
@@ -161,6 +162,7 @@ public class LasersGUI extends Application implements Observer {
         HBox buttonBox = new HBox();
         buttonBox.setSpacing(2);
         Button check = new Button("Check");
+        check.setOnAction(MouseEvent -> model.verify());
         Button hint = new Button("Hint");
         Button solve = new Button("Solve");
         Button restart = new Button("Restart");
@@ -180,7 +182,9 @@ public class LasersGUI extends Application implements Observer {
         try {
             String filename = file.getPath();
             this.model = new LasersModel(filename);
+            model.updateBeams();
             loadBoard();
+
 
         } catch (Exception e) {
             System.out.println(e);
@@ -192,6 +196,7 @@ public class LasersGUI extends Application implements Observer {
      * Function to reset the board, called when the restart button is pressed.
      */
     private void reset() {
+        //TODO model.reset();
         loadBoard();
     }
 
@@ -202,8 +207,8 @@ public class LasersGUI extends Application implements Observer {
     private void loadBoard() {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
-                int tileSize = 50;
-                int arc = 20;
+                int tileSize = 40;
+                int arc = 5;
                 StackPane stack = new StackPane();
                 RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.LIGHTGRAY, row, col);
                 Text text = new Text("");
@@ -217,7 +222,6 @@ public class LasersGUI extends Application implements Observer {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
                     text.setFill(Color.WHITE);
-
                 } else {
                     if (this.model.getGrid(row, col) == '*') {
                         text.setText("*");
@@ -231,8 +235,9 @@ public class LasersGUI extends Application implements Observer {
                         text.setEffect(new GaussianBlur());
                         text.setFill(Color.RED);
                     }
-                    stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
+
                 }
+                stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
                 stack.getChildren().add(rect);
                 stack.getChildren().add(text);
                 board.add(stack, col, row);
@@ -255,7 +260,7 @@ public class LasersGUI extends Application implements Observer {
             this.model.remove(rect.getRow(), rect.getCol());
             rect.setFill(Color.LIGHTGRAY);
             text.setText("");
-        } else if (curr == '.') {
+        } else {
             this.model.add(rect.getRow(), rect.getCol());
             Image laser = new Image("gui/resources/laser.png");
             ImagePattern fill = new ImagePattern(laser);
