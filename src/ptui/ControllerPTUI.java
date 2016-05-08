@@ -8,7 +8,7 @@ import model.LasersModel;
  * the operations that are input in the run method.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Elijah Bosley, Stefan Marchart
  */
 public class ControllerPTUI {
     /**
@@ -23,6 +23,7 @@ public class ControllerPTUI {
      */
     public ControllerPTUI(LasersModel model) {
         this.model = model;
+
     }
 
     /**

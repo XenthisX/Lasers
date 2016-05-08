@@ -12,9 +12,19 @@ import java.util.Observer;
  * You should create the model here, and then implement the update method.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Elijah Bosley, Stefan Marchart
  */
 public class LasersPTUI implements Observer {
+
+    /**
+     * A horizontal divider
+     */
+    public final static char HORI_DIVIDE = '-';
+    /**
+     * A vertical divider
+     */
+    public final static char VERT_DIVIDE = '|';
+
     /**
      * The UI's connection to the model
      */
@@ -42,6 +52,45 @@ public class LasersPTUI implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        // TODO
+        this.model.updateBeams();
+        System.out.println(arg);
+        System.out.println(createOutput());
+        
+    }
+
+    private String createOutput() {
+        String result = "  ";
+        // Creates labels for the top columns
+        for (int i = 0; i < this.model.getWidth() + (this.model.getWidth() - 1); i++) {
+            if (i % 2 == 0) result += i / 2 + " ";
+        }
+        result += "\n  ";
+        // Creates dividers for the top part of the Laser puzzle
+        for (int i = 0; i < this.model.getWidth() + (this.model.getWidth() - 1); i++) {
+            result += HORI_DIVIDE;
+        }
+        result += "\n";
+        // nested for loops to generate the visible part of the grid
+        for (int row = 0; row < this.model.getHeight(); row++) {
+            for (int col = 0; col < this.model.getWidth(); col++) {
+                // this if creates the row numbers and left hand divider
+                if (col == 0) {
+                    result += row + "" + VERT_DIVIDE;
+                }
+
+                result += (this.model.getGrid(row, col));
+
+                // this if adds spacing after every item gets placed in the puzzle
+                if (col >= 0 && col < this.model.getWidth() - 1) {
+                    result += " ";
+                }
+
+            }
+            // new line after running through the whole X line
+            if (row != this.model.getHeight() - 1) {
+                result += "\n";
+            }
+        }
+        return result;
     }
 }
