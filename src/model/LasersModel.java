@@ -358,7 +358,7 @@ public class LasersModel extends Observable {
      * A utility method that indicates the model has changed and
      * notifies observers
      */
-    private void announceChange() {
+    public void announceChange() {
         setChanged();
         notifyObservers();
     }
