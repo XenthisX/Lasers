@@ -223,8 +223,11 @@ public class LasersGUI extends Application implements Observer {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
                     text.setFill(Color.WHITE);
-                } else {
+                } else { // it's either a laser or a beam
                     if (this.model.getGrid(row, col) == '*') {
+                        Image beam = new Image("gui/resources/beam.png");
+                        ImagePattern fill = new ImagePattern(beam);
+                        rect.setFill(fill);
                         text.setText("*");
                         text.setFill(Color.RED);
                         text.setEffect(new GaussianBlur());
@@ -232,7 +235,7 @@ public class LasersGUI extends Application implements Observer {
                         Image laser = new Image("gui/resources/laser.png");
                         ImagePattern fill = new ImagePattern(laser);
                         rect.setFill(fill);
-                        text.setText("*");
+                        text.setText("");
                         text.setEffect(new GaussianBlur());
                         text.setFill(Color.RED);
                     }
