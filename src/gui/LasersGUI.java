@@ -134,9 +134,8 @@ public class LasersGUI extends Application implements Observer {
         File file = fileChooser.showOpenDialog(new Stage());
 
         try {
-            //TODO update model to allow recreation while running
             String filename = file.getPath();
-            //this.model = new LasersModel(filename);
+            board.getChildren().clear();
             this.model.updateModel(filename);
             model.updateBeams();
             loadBoard();
@@ -161,6 +160,7 @@ public class LasersGUI extends Application implements Observer {
      * as on the initial initialization of the program.
      */
     private void loadBoard() {
+
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = 40;
