@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.Font;
@@ -59,53 +61,6 @@ public class LasersGUI extends Application implements Observer {
     }
 
     /**
-     * A private utility function for setting the background of a button to
-     * an image in the resources subdirectory.
-     *
-     * @param button    the button control
-     * @param bgImgName the name of the image file
-     */
-    private void setButtonBackground(Button button, String bgImgName) {
-        BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(getClass().getResource("resources/" + bgImgName).toExternalForm()),
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                BackgroundSize.DEFAULT);
-        Background background = new Background(backgroundImage);
-        button.setBackground(background);
-    }
-
-    /**
-     * This is a private demo method that shows how to create a button
-     * and attach a foreground image with a background image that
-     * toggles from yellow to red each time it is pressed.
-     *
-     * @param stage the stage to add components into
-     */
-    private void buttonDemo(Stage stage) {
-        // this demonstrates how to create a button and attach a foreground and
-        // background image to it.
-        Button button = new Button();
-        Image laserImg = new Image(getClass().getResourceAsStream("resources/laser.png"));
-        ImageView laserIcon = new ImageView(laserImg);
-        button.setGraphic(laserIcon);
-        setButtonBackground(button, "yellow.png");
-        button.setOnAction(e -> {
-            // toggles background between yellow and red
-            if (!status) {
-                setButtonBackground(button, "yellow.png");
-            } else {
-                setButtonBackground(button, "red.png");
-            }
-            status = !status;
-        });
-
-        Scene scene = new Scene(button);
-        stage.setScene(scene);
-    }
-
-    /**
      * Initialization function to add components to the stage
      *
      * @param stage the stage to add UI components into
@@ -138,7 +93,6 @@ public class LasersGUI extends Application implements Observer {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO
         init(primaryStage);  // do all your UI initialization here
 
         primaryStage.setTitle("Lasers");
@@ -149,7 +103,6 @@ public class LasersGUI extends Application implements Observer {
     public void update(Observable o, Object arg) {
         title.setText((String) arg);
         updateBoard();
-        // TODO
     }
 
     private void updateBoard() {
@@ -211,39 +164,46 @@ public class LasersGUI extends Application implements Observer {
                 int tileSize = 40;
                 int arc = 5;
                 StackPane stack = new StackPane();
+
+                /** Setup background fill */
+                Image background = new Image("gui/resources/yellow.png");
+                ImageView backFill = new ImageView(background);
+
+                /** Setup rectangle */
                 RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.LIGHTGRAY, row, col);
-                Text text = new Text("");
-                text.setFont(new Font("Arial", tileSize - 5));
-                text.setBoundsType(TextBoundsType.VISUAL);
                 rect.setArcHeight(arc);
                 rect.setArcWidth(arc);
+
+                /** Setup text */
+                Text text = new Text("");
+                text.setFill(Color.WHITE);
+                text.setFont(new Font("Arial", tileSize - 5));
+                text.setBoundsType(TextBoundsType.VISUAL);
+
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
                     rect.setFill(Color.BLACK);
                     if (this.model.getGrid(row, col) != 'X') {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
-                    text.setFill(Color.WHITE);
+
+                    /** This else loop is responsible for dealing with coloring lasers and beams */
                 } else { // it's either a laser or a beam
                     if (this.model.getGrid(row, col) == '*') {
                         Image beam = new Image("gui/resources/beam.png");
                         ImagePattern fill = new ImagePattern(beam);
                         rect.setFill(fill);
-                        text.setText("*");
-                        text.setFill(Color.RED);
-                        text.setEffect(new GaussianBlur());
+
                     } else if (this.model.getGrid(row, col) == 'L') {
                         Image laser = new Image("gui/resources/laser.png");
                         ImagePattern fill = new ImagePattern(laser);
                         rect.setFill(fill);
-                        text.setText("");
-                        text.setEffect(new GaussianBlur());
-                        text.setFill(Color.RED);
                     }
 
                 }
-                stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
+                stack.getChildren().add(backFill);
                 stack.getChildren().add(rect);
                 stack.getChildren().add(text);
+                stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
                 board.add(stack, col, row);
             }
         }
@@ -256,22 +216,21 @@ public class LasersGUI extends Application implements Observer {
      * @param stack the stack object to change
      */
     private void updateLaser(StackPane stack) {
-        RectangleGrid rect = (RectangleGrid) stack.getChildren().get(0);
-        Text text = (Text) stack.getChildren().get(1);
+        RectangleGrid rect = (RectangleGrid) stack.getChildren().get(1);
         Character curr = this.model.getGrid(rect.getRow(), rect.getCol());
         if (curr == 'L') {
+            ImageView background = (ImageView) stack.getChildren().get(0);
             this.model.remove(rect.getRow(), rect.getCol());
             rect.setFill(Color.LIGHTGRAY);
-            text.setText("");
-        } else {
+        } else if (curr == '.' || curr == '*') {
+            ImageView background = (ImageView) stack.getChildren().get(0);
             this.model.add(rect.getRow(), rect.getCol());
             Image laser = new Image("gui/resources/laser.png");
             ImagePattern fill = new ImagePattern(laser);
             rect.setFill(fill);
-            text.setText("*");
-            text.setEffect(new GaussianBlur());
-            text.setFill(Color.RED);
-        }
 
+        } else {
+            this.model.add(rect.getRow(), rect.getCol());
+        }
     }
 }
