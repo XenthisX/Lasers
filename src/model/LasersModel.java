@@ -1,11 +1,15 @@
 package model;
 
+import backtracking.Configuration;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Scanner;
 
-public class LasersModel extends Observable {
+public class LasersModel extends Observable implements Configuration {
 
     /**
      * an empty cell
@@ -37,6 +41,9 @@ public class LasersModel extends Observable {
      */
     private int height;
 
+    private int currentRow;
+    private int currentCol;
+
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = null;
         in = new Scanner(new File(filename));
@@ -52,6 +59,21 @@ public class LasersModel extends Observable {
             }
         }
         in.close();
+        currentCol=0;
+        currentRow=0;
+    }
+
+    public LasersModel(LasersModel other){
+        this.width=other.width;
+        this.height=other.width;
+        this.grid = new char[width][width];
+        for (int row=0;row<width;row++){
+            for (int col=0; col<width;col++){
+                this.grid[row][col]=other.grid[row][col];
+            }
+        }
+        this.currentCol=other.currentCol;
+        this.currentRow=other.currentRow;
     }
 
     /**
@@ -420,5 +442,35 @@ public class LasersModel extends Observable {
             }
         }
         return result;
+    }
+
+    @Override
+    public Collection<Configuration> getSuccessors() {
+        if(currentCol==width-1){
+            currentRow++;
+            currentCol=0;
+        }else{
+            currentCol++;
+        }
+
+
+        LasersModel model1 = new LasersModel(this);
+        model1.add(currentRow,currentCol);
+        LasersModel model2 = new LasersModel(this);
+
+        ArrayList<Configuration> configList=new ArrayList<>();
+        configList.add(model1);
+        configList.add(model2);
+
+    }
+
+    @Override
+    public boolean isValid() {
+        return false;
+    }
+
+    @Override
+    public boolean isGoal() {
+        return false;
     }
 }

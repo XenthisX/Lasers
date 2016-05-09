@@ -1,5 +1,8 @@
 package backtracking;
 
+import model.LasersModel;
+
+import java.io.FileNotFoundException;
 import java.util.Collection;
 
 /**
@@ -14,15 +17,20 @@ import java.util.Collection;
  * @author Sean Strout @ RIT CS
  * @author YOUR NAME HERE
  */
-public class SafeConfig implements Configuration {
+public class SafeConfig extends LasersModel implements Configuration{
 
-    public SafeConfig(String filename) {
-        // TODO
+
+    public SafeConfig(String filename) throws FileNotFoundException {
+        super(filename);
     }
+
 
     @Override
     public Collection<Configuration> getSuccessors() {
-        // TODO
+
+
+
+
         return null;
     }
 
