@@ -1,8 +1,5 @@
 package backtracking;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-
 /**
  * Thie is the main class for a safe solver with a path.  It runs the
  * backtracking algorithm and displays the full path of the solution,
@@ -10,6 +7,7 @@ import java.util.List;
  *
  * @author Sean Strout @ RIT CS
  */
+/*
 public class SafeSolverPath {
     public static void main(String[] args) throws FileNotFoundException {
         if (args.length != 2) {
@@ -47,3 +45,4 @@ public class SafeSolverPath {
         }
     }
 }
+*/

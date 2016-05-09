@@ -1,19 +1,26 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -31,7 +38,7 @@ import java.util.Observer;
  * and receives updates from it.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Elijah Bosley, Stefan Marchart
  */
 public class LasersGUI extends Application implements Observer {
     /**
@@ -40,8 +47,10 @@ public class LasersGUI extends Application implements Observer {
     private LasersModel model;
     private String modelOut;
     private GridPane board;
-    private Label title;
+    private Text title;
 
+    private DoubleProperty fontSize = new SimpleDoubleProperty(10);
+    private IntegerProperty blues = new SimpleIntegerProperty(50);
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -63,29 +72,42 @@ public class LasersGUI extends Application implements Observer {
      * @param stage the stage to add UI components into
      */
     private void init(Stage stage) {
-        // TODO
-        BorderPane main = new BorderPane();
+        VBox main = new VBox();
+        Scene scene = new Scene(main);
+
+
+        fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
+
+
 
         /** Set up title */
-        title = new Label("Welcome to the LasersGUI");
-        title.setFont(new Font("Helvectiva", 15));
-        main.setTop(title);
+        title = new Text("Welcome to the LasersGUI");
+        title.setFont(new Font("Helvectiva", fontSize.doubleValue()));
+        title.wrappingWidthProperty().bind(scene.widthProperty());
+        main.getChildren().add(title);
         title.managedProperty().bind(title.visibleProperty());
-
+        title.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString(), ";"
+                , "-fx-base: rgb(100,100,", blues.asString(), ");"));
+        title.setTextAlignment(TextAlignment.CENTER);
         /** Set up grid */
         board = new GridPane();
         board.setVgap(5);
         board.setHgap(5);
         loadBoard(-1, -1);
-        main.setCenter(board);
-        board.managedProperty().bind(board.visibleProperty());
+        board.setAlignment(Pos.CENTER);
+        main.getChildren().add(board);
 
         /** Add buttons */
         HBox buttons = createButtons();
-        main.setBottom(buttons);
+        buttons.setAlignment(Pos.CENTER);
+        main.getChildren().add(buttons);
+        buttons.setPadding(new Insets(10, 0, 0, 0));
 
-        stage.setScene(new Scene(main));
-        //buttonDemo(stage);  // this can be removed/altered
+        /** Initialize stage */
+        main.setPadding(new Insets(10, 10, 10, 10));
+        main.setAlignment(Pos.CENTER);
+        stage.sizeToScene();
+        stage.setScene(scene);
     }
 
     @Override
@@ -175,7 +197,7 @@ public class LasersGUI extends Application implements Observer {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = 40;
-                int arc = 5;
+                int arc = 10;
                 StackPane stack = new StackPane();
                 /** Setup background fill */
                 Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
