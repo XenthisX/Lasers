@@ -462,6 +462,8 @@ public class LasersModel extends Observable implements Configuration {
         configList.add(model1);
         configList.add(model2);
 
+        return configList;
+
     }
 
     @Override
