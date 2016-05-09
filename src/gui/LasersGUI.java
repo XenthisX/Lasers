@@ -134,8 +134,10 @@ public class LasersGUI extends Application implements Observer {
         File file = fileChooser.showOpenDialog(new Stage());
 
         try {
+            //TODO update model to allow recreation while running
             String filename = file.getPath();
-            this.model = new LasersModel(filename);
+            //this.model = new LasersModel(filename);
+            this.model.updateModel(filename);
             model.updateBeams();
             loadBoard();
 

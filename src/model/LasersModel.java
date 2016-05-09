@@ -473,4 +473,23 @@ public class LasersModel extends Observable implements Configuration {
     public boolean isGoal() {
         return false;
     }
+
+    public void updateModel(String filename) throws FileNotFoundException {
+        Scanner in;
+        in = new Scanner(new File(filename));
+
+        width = Integer.parseInt(in.next());
+        height = Integer.parseInt(in.next());
+
+        grid = new char[height][width];
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                grid[row][col] = in.next().charAt(0);
+            }
+        }
+        in.close();
+        currentCol = 0;
+        currentRow = 0;
+    }
 }
