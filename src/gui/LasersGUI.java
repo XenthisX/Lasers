@@ -131,11 +131,9 @@ public class LasersGUI extends Application implements Observer {
     private void verify() {
         model.verify();
         if (modelOut.startsWith("Error verifying at: (")) {
-            System.out.println("Error verifying");
             String temp = modelOut.toLowerCase();
             temp = temp.replaceAll("[^\\d,]+", "");
             int[] coords = Arrays.stream(temp.split(",")).mapToInt(Integer::parseInt).toArray();
-            System.out.println(coords[0] + "" + coords[1]);
             loadBoard(coords[0], coords[1]);
         }
     }
@@ -179,9 +177,6 @@ public class LasersGUI extends Application implements Observer {
                 int tileSize = 40;
                 int arc = 5;
                 StackPane stack = new StackPane();
-                if (row == rowS && col == colS) {
-                    System.out.println("Hit coordinates");
-                }
                 /** Setup background fill */
                 Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
                 background.setArcWidth(arc);
@@ -200,7 +195,6 @@ public class LasersGUI extends Application implements Observer {
 
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
                     if (row == rowS && col == colS) {
-                        System.out.println("coloring red");
                         rect.setFill(Color.RED);
                     } else {
                         rect.setFill(Color.BLACK);
@@ -218,7 +212,7 @@ public class LasersGUI extends Application implements Observer {
                         } else {
                             background.setFill(Color.YELLOW);
                         }
-                        Image beam = new Image("gui/resources/beam.png");
+                        Image beam = new Image("gui/resources/beam2.png");
                         ImagePattern fill = new ImagePattern(beam);
                         rect.setFill(fill);
 
@@ -228,7 +222,7 @@ public class LasersGUI extends Application implements Observer {
                         } else {
                             background.setFill(Color.ORANGE);
                         }
-                        Image laser = new Image("gui/resources/laser.png");
+                        Image laser = new Image("gui/resources/laser2.png");
                         ImagePattern fill = new ImagePattern(laser);
                         rect.setFill(fill);
                     } else {
