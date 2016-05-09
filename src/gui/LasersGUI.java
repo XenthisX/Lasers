@@ -5,14 +5,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -22,6 +21,7 @@ import model.LasersModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,14 +35,10 @@ import java.util.Observer;
  */
 public class LasersGUI extends Application implements Observer {
     /**
-     * this can be removed - it is used to demonstrates the button toggle
-     */
-    private static boolean status = true;
-    /**
      * The UI's connection to the model
      */
     private LasersModel model;
-
+    private String modelOut;
     private GridPane board;
     private Label title;
 
@@ -80,7 +76,7 @@ public class LasersGUI extends Application implements Observer {
         board = new GridPane();
         board.setVgap(5);
         board.setHgap(5);
-        loadBoard();
+        loadBoard(-1, -1);
         main.setCenter(board);
         board.managedProperty().bind(board.visibleProperty());
 
@@ -102,21 +98,21 @@ public class LasersGUI extends Application implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        modelOut = (String) arg;
         title.setText((String) arg);
         updateBoard();
     }
 
     private void updateBoard() {
         model.updateBeams();
-        loadBoard();
-
+        loadBoard(-1, -1);
     }
 
     private HBox createButtons() {
         HBox buttonBox = new HBox();
         buttonBox.setSpacing(2);
         Button check = new Button("Check");
-        check.setOnAction(MouseEvent -> model.verify());
+        check.setOnAction(MouseEvent -> verify());
         Button hint = new Button("Hint");
         hint.setOnAction(MouseEvent -> hint());
         Button solve = new Button("Solve");
@@ -132,6 +128,18 @@ public class LasersGUI extends Application implements Observer {
 
     }
 
+    private void verify() {
+        model.verify();
+        if (modelOut.startsWith("Error verifying at: (")) {
+            System.out.println("Error verifying");
+            String temp = modelOut.toLowerCase();
+            temp = temp.replaceAll("[^\\d,]+", "");
+            int[] coords = Arrays.stream(temp.split(",")).mapToInt(Integer::parseInt).toArray();
+            System.out.println(coords[0] + "" + coords[1]);
+            loadBoard(coords[0], coords[1]);
+        }
+    }
+
     private void loadNew() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Safe File");
@@ -144,7 +152,7 @@ public class LasersGUI extends Application implements Observer {
             board.getChildren().clear();
             this.model.updateModel(filename);
             model.updateBeams();
-            loadBoard();
+            loadBoard(-1, -1);
 
 
         } catch (Exception e) {
@@ -158,27 +166,29 @@ public class LasersGUI extends Application implements Observer {
      */
     private void reset() {
         model.reset();
-        loadBoard();
+        loadBoard(-1, -1);
     }
 
     /**
      * Function that loads the board into the GridPane board object. This is used on the redraw of the board as well
      * as on the initial initialization of the program.
      */
-    private void loadBoard() {
-
+    private void loadBoard(int rowS, int colS) {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = 40;
                 int arc = 5;
                 StackPane stack = new StackPane();
-
+                if (row == rowS && col == colS) {
+                    System.out.println("Hit coordinates");
+                }
                 /** Setup background fill */
-                Image background = new Image("gui/resources/yellow.png");
-                ImageView backFill = new ImageView(background);
+                Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
+                background.setArcWidth(arc);
+                background.setArcHeight(arc);
 
                 /** Setup rectangle */
-                RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.LIGHTGRAY, row, col);
+                RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.TRANSPARENT, row, col);
                 rect.setArcHeight(arc);
                 rect.setArcWidth(arc);
 
@@ -189,7 +199,13 @@ public class LasersGUI extends Application implements Observer {
                 text.setBoundsType(TextBoundsType.VISUAL);
 
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
-                    rect.setFill(Color.BLACK);
+                    if (row == rowS && col == colS) {
+                        System.out.println("coloring red");
+                        rect.setFill(Color.RED);
+                    } else {
+                        rect.setFill(Color.BLACK);
+                    }
+                    //rect.setFill(Color.BLACK);
                     if (this.model.getGrid(row, col) != 'X') {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
@@ -197,18 +213,34 @@ public class LasersGUI extends Application implements Observer {
                     /** This else loop is responsible for dealing with coloring lasers and beams */
                 } else { // it's either a laser or a beam
                     if (this.model.getGrid(row, col) == '*') {
+                        if (row == rowS && col == colS) {
+                            background.setFill(Color.RED);
+                        } else {
+                            background.setFill(Color.YELLOW);
+                        }
                         Image beam = new Image("gui/resources/beam.png");
                         ImagePattern fill = new ImagePattern(beam);
                         rect.setFill(fill);
 
                     } else if (this.model.getGrid(row, col) == 'L') {
+                        if (row == rowS && col == colS) {
+                            background.setFill(Color.RED);
+                        } else {
+                            background.setFill(Color.ORANGE);
+                        }
                         Image laser = new Image("gui/resources/laser.png");
                         ImagePattern fill = new ImagePattern(laser);
                         rect.setFill(fill);
+                    } else {
+                        if (row == rowS && col == colS) {
+                            background.setFill(Color.RED);
+                        } else {
+                            background.setFill(Color.LIGHTGRAY);
+                        }
                     }
 
                 }
-                stack.getChildren().add(backFill);
+                stack.getChildren().add(background);
                 stack.getChildren().add(rect);
                 stack.getChildren().add(text);
                 stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
@@ -227,11 +259,11 @@ public class LasersGUI extends Application implements Observer {
         RectangleGrid rect = (RectangleGrid) stack.getChildren().get(1);
         Character curr = this.model.getGrid(rect.getRow(), rect.getCol());
         if (curr == 'L') {
-            ImageView background = (ImageView) stack.getChildren().get(0);
+            //ImageView background = (ImageView) stack.getChildren().get(0);
             this.model.remove(rect.getRow(), rect.getCol());
             rect.setFill(Color.LIGHTGRAY);
         } else if (curr == '.' || curr == '*') {
-            ImageView background = (ImageView) stack.getChildren().get(0);
+            //ImageView background = (ImageView) stack.getChildren().get(0);
             this.model.add(rect.getRow(), rect.getCol());
             Image laser = new Image("gui/resources/laser.png");
             ImagePattern fill = new ImagePattern(laser);
