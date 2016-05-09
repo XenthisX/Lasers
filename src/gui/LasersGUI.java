@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -117,6 +118,7 @@ public class LasersGUI extends Application implements Observer {
         Button check = new Button("Check");
         check.setOnAction(MouseEvent -> model.verify());
         Button hint = new Button("Hint");
+        hint.setOnAction(MouseEvent -> hint());
         Button solve = new Button("Solve");
         Button restart = new Button("Restart");
         restart.setOnAction(MouseEvent -> reset());
@@ -124,6 +126,10 @@ public class LasersGUI extends Application implements Observer {
         load.setOnAction(MouseEvent -> loadNew());
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
         return buttonBox;
+    }
+
+    private void hint() {
+
     }
 
     private void loadNew() {

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Observable;
 import java.util.Scanner;
 
+
 public class LasersModel extends Observable implements Configuration {
 
     /**
@@ -43,6 +44,8 @@ public class LasersModel extends Observable implements Configuration {
 
     private int currentRow;
     private int currentCol;
+
+    private ArrayList<Coordinate> lasers = new ArrayList<>();
 
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = null;
@@ -112,6 +115,7 @@ public class LasersModel extends Observable implements Configuration {
             notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
         } else {
             grid[r][c] = 'L';
+            lasers.add(new Coordinate(r,c));
             setChanged();
             notifyObservers("Laser added at: (" + r + ", " + c + ")");
         }
@@ -155,6 +159,13 @@ public class LasersModel extends Observable implements Configuration {
             rightBeam(r, c, t);
             upBeam(r, c, t);
             downBeam(r, c, t);
+            Coordinate coord=new Coordinate(r,c);
+            for(int iter=0; iter<lasers.size();iter++){
+                if(lasers.get(iter).equals(coord)){
+                    lasers.remove(iter);
+                    break;
+                }
+            }
             setChanged();
             notifyObservers("Laser removed at: (" + r + ", " + c + ")");
         }
@@ -468,12 +479,36 @@ public class LasersModel extends Observable implements Configuration {
 
     @Override
     public boolean isValid() {
-        return false;
+        boolean isStillValid=false;
+        for(Coordinate l:lasers) {
+            if(!checkBeams(l.getRow(),l.getCol())) {
+                isStillValid = false;
+            }
+        }
+        return isStillValid;
     }
 
     @Override
     public boolean isGoal() {
-        return false;
+        if(!(currentRow==height-1&&currentCol==width-1)){
+            return false;
+        }
+        if(!isValid()){
+            return false;
+        }
+        for (int row=0;row<width;row++){
+            for (int col=0; col<width;col++){
+                if(grid[row][col]==EMPTY){
+                    return false;
+                }
+                if ("01234X".indexOf(grid[row][col]) != -1){
+                    if(checkNeighbors(row,col)!=grid[row][col]){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void updateModel(String filename) throws FileNotFoundException {

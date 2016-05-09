@@ -73,16 +73,4 @@ public class Backtracker {
         }
         return Optional.empty();
     }
-
-    /**
-     * Find a goal configuration if it exists, and how to get there.
-     *
-     * @param current the starting configuration
-     * @return a list of configurations to get to a goal configuration.
-     * If there are none, return null.
-     */
-    public List<Configuration> solveWithPath(Configuration current) {
-        // TODO
-        return new ArrayList<>();  // change this
-    }
 }
