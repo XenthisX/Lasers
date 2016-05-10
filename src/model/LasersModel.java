@@ -129,19 +129,22 @@ public class LasersModel extends Observable implements Configuration {
      * @param r the row to add the laser to
      * @param c the column to add the laser to
      */
-    public void add(int r, int c) {
+    public boolean add(int r, int c) {
         //If pillar or laser
         if (!checkCoords(r, c)) {
             setChanged();
             notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
+            return false;
         } else if ("01234LX".indexOf(grid[r][c]) != -1) {
             setChanged();
             notifyObservers("Error adding laser at: (" + r + ", " + c + ")");
+            return false;
         } else {
             grid[r][c] = 'L';
             lasers.add(new Coordinate(r, c));
             setChanged();
             notifyObservers("Laser added at: (" + r + ", " + c + ")");
+            return true;
         }
     }
 
@@ -521,19 +524,19 @@ public class LasersModel extends Observable implements Configuration {
         if(currentRow > height) {
             return new ArrayList<Configuration>();
         }
+        System.out.println(currentCol + " " + currentRow);
 
 
-
-
-        LasersModel model1 = new LasersModel(this);
-        model1.add(currentRow, currentCol);
-        LasersModel model2 = new LasersModel(this);
 
         ArrayList<Configuration> configList = new ArrayList<>();
-
+        LasersModel model1 = new LasersModel(this);
         model1.updateBeams();
+        if(model1.add(currentRow, currentCol)) {
+            configList.add(model1);
+        }
+
+        LasersModel model2 = new LasersModel(this);
         model2.updateBeams();
-        configList.add(model1);
         configList.add(model2);
 
         return configList;
