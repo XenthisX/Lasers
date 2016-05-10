@@ -51,6 +51,8 @@ public class LasersGUI extends Application implements Observer {
 
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
     private IntegerProperty blues = new SimpleIntegerProperty(50);
+
+    private IntegerProperty tilesSize = new SimpleIntegerProperty(10);
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -77,7 +79,7 @@ public class LasersGUI extends Application implements Observer {
 
 
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
-
+        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(40));
 
 
         /** Set up title */
@@ -108,6 +110,8 @@ public class LasersGUI extends Application implements Observer {
         main.setAlignment(Pos.CENTER);
         stage.sizeToScene();
         stage.setScene(scene);
+        scene.widthProperty().addListener(ChangeListener -> loadBoard(-1, -1));
+        scene.heightProperty().addListener(ChangeListener -> loadBoard(-1, -1));
     }
 
     @Override
@@ -194,9 +198,11 @@ public class LasersGUI extends Application implements Observer {
      * as on the initial initialization of the program.
      */
     private void loadBoard(int rowS, int colS) {
+        board.getChildren().removeAll();
+
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
-                int tileSize = 40;
+                int tileSize = tilesSize.getValue();
                 int arc = 10;
                 StackPane stack = new StackPane();
                 /** Setup background fill */
@@ -256,11 +262,16 @@ public class LasersGUI extends Application implements Observer {
                     }
 
                 }
+
                 stack.getChildren().add(background);
                 stack.getChildren().add(rect);
                 stack.getChildren().add(text);
                 stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
+
+
                 board.add(stack, col, row);
+
+                board.setMaxHeight(tileSize * 40);
             }
         }
     }
