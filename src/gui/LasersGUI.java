@@ -88,8 +88,7 @@ public class LasersGUI extends Application implements Observer {
         title.wrappingWidthProperty().bind(scene.widthProperty());
         main.getChildren().add(title);
         title.managedProperty().bind(title.visibleProperty());
-        title.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString(), ";"
-                , "-fx-base: rgb(100,100,", blues.asString(), ");"));
+        title.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
         title.setTextAlignment(TextAlignment.CENTER);
         /** Set up grid */
         board = new GridPane();
@@ -147,6 +146,7 @@ public class LasersGUI extends Application implements Observer {
         Button load = new Button("Load");
         load.setOnAction(MouseEvent -> loadNew());
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
+        buttonBox.autosize();
         return buttonBox;
     }
 
@@ -203,7 +203,7 @@ public class LasersGUI extends Application implements Observer {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = tilesSize.getValue();
-                int arc = 10;
+                int arc = tileSize / 4;
                 StackPane stack = new StackPane();
                 /** Setup background fill */
                 Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
