@@ -63,6 +63,7 @@ public class Lasers {
                     // this launches the GUI and passes in the safe file.
                     Application.launch(LasersGUI.class, safeFile);
                     break;
+
                 case PTUI:
                     // create the "view" first
                     LasersPTUI ptui = new LasersPTUI(safeFile);

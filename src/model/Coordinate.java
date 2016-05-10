@@ -34,7 +34,7 @@ public class Coordinate {
         if(obj == null) return false;
         else if (!(obj instanceof Coordinate)) return false;
         else {
-            return (Row == ((Coordinate)obj).getRow()) && (Col == ((Coordinate)obj).getCol());
+            return (Row == ((Coordinate)obj).getRow() ) && (Col == ((Coordinate)obj).getCol());
         }
     }
 }

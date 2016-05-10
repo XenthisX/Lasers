@@ -52,7 +52,7 @@ public class LasersGUI extends Application implements Observer {
     private int width;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
     private IntegerProperty tilesSize = new SimpleIntegerProperty(10);
-
+    private boolean solved=false;
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -164,6 +164,10 @@ public class LasersGUI extends Application implements Observer {
     }
 
     private void solve() {
+
+        if (!solved){
+
+
         Backtracker backtracker = new Backtracker(false);
         this.reset();
         Optional temp = backtracker.solve(this.model);
@@ -178,6 +182,8 @@ public class LasersGUI extends Application implements Observer {
             title.setText("This safe has no solution!");
         }
 
+            solved=true;
+        }
 
     }
 
@@ -187,8 +193,14 @@ public class LasersGUI extends Application implements Observer {
     private void hint() {
         Backtracker backtracker = new Backtracker(false);
         Optional temp = backtracker.solve(this.model);
+
+
+
+
         if (temp.isPresent()) {
             LasersModel solution = (LasersModel) temp.get();
+
+            
 
             ArrayList<Coordinate> solList = solution.getLasers();
             for (Coordinate cord : solList) {
@@ -198,8 +210,12 @@ public class LasersGUI extends Application implements Observer {
                     model.updateBeams();
                     return;
                 }
+                title.setText("Hint: no next step!");
             }
-            title.setText("Hint: no next step!");
+
+
+
+
 
         }
     }
@@ -234,6 +250,7 @@ public class LasersGUI extends Application implements Observer {
             board.getChildren().clear();
             this.model.updateModel(filename);
             model.updateBeams();
+            solved=false;
             loadBoard(-1, -1);
 
 
@@ -247,6 +264,7 @@ public class LasersGUI extends Application implements Observer {
      * Function to reset the board, called when the restart button is pressed.
      */
     private void reset() {
+        solved=false;
         model.reset();
         loadBoard(-1, -1);
     }
