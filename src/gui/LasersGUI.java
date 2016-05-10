@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.LasersModel;
 
@@ -80,7 +81,8 @@ public class LasersGUI extends Application implements Observer {
 
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
         tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(40));
-
+        stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 4);
+        stage.setWidth(stage.getHeight());
 
         /** Set up title */
         title = new Text("Welcome to the LasersGUI");
@@ -203,18 +205,18 @@ public class LasersGUI extends Application implements Observer {
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
                 int tileSize = tilesSize.getValue();
-                int arc = tileSize / 4;
+                int arc = tileSize / 3;
                 StackPane stack = new StackPane();
                 /** Setup background fill */
                 Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
                 background.setArcWidth(arc);
                 background.setArcHeight(arc);
-
+                background.setSmooth(true);
                 /** Setup rectangle */
                 RectangleGrid rect = new RectangleGrid(tileSize, tileSize, Color.TRANSPARENT, row, col);
                 rect.setArcHeight(arc);
                 rect.setArcWidth(arc);
-
+                rect.setSmooth(true);
                 /** Setup text */
                 Text text = new Text("");
                 text.setFill(Color.WHITE);
@@ -223,11 +225,10 @@ public class LasersGUI extends Application implements Observer {
 
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
                     if (row == rowS && col == colS) {
-                        rect.setFill(Color.RED);
+                        background.setFill(Color.RED);
                     } else {
-                        rect.setFill(Color.BLACK);
+                        background.setFill(Color.BLACK);
                     }
-                    //rect.setFill(Color.BLACK);
                     if (this.model.getGrid(row, col) != 'X') {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
@@ -267,7 +268,6 @@ public class LasersGUI extends Application implements Observer {
                 stack.getChildren().add(rect);
                 stack.getChildren().add(text);
                 stack.setOnMouseClicked(MouseClickEvent -> updateLaser(stack));
-
 
                 board.add(stack, col, row);
 
