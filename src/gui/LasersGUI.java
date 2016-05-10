@@ -49,7 +49,7 @@ public class LasersGUI extends Application implements Observer {
     private String modelOut;
     private GridPane board;
     private Text title;
-
+    private int width;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
     private IntegerProperty blues = new SimpleIntegerProperty(50);
 
@@ -78,10 +78,10 @@ public class LasersGUI extends Application implements Observer {
         VBox main = new VBox();
         Scene scene = new Scene(main);
 
-
+        width = model.getWidth();
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
-        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(40));
-        stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 4);
+        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(width * 3));
+        stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 3);
         stage.setWidth(stage.getHeight());
 
         /** Set up title */
@@ -111,8 +111,13 @@ public class LasersGUI extends Application implements Observer {
         main.setAlignment(Pos.CENTER);
         stage.sizeToScene();
         stage.setScene(scene);
-        scene.widthProperty().addListener(ChangeListener -> loadBoard(-1, -1));
-        scene.heightProperty().addListener(ChangeListener -> loadBoard(-1, -1));
+        scene.widthProperty().addListener(ChangeListener -> reloadBoard());
+        scene.heightProperty().addListener(ChangeListener -> reloadBoard());
+    }
+
+    private void reloadBoard() {
+        loadBoard(-1, -1);
+        width = model.getWidth();
     }
 
     @Override
@@ -236,7 +241,9 @@ public class LasersGUI extends Application implements Observer {
      * as on the initial initialization of the program.
      */
     private void loadBoard(int rowS, int colS) {
-        board.getChildren().removeAll();
+        for (int i = 0; i < board.getChildren().size() - 1; i++) {
+            board.getChildren().remove(0);
+        }
 
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
