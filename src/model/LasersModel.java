@@ -47,6 +47,7 @@ public class LasersModel extends Observable implements Configuration {
     private int currentCol;
 
     private ArrayList<Coordinate> lasers;
+    private ArrayList<Coordinate> pillars;
     //private ArrayList<Coordinate> lasers=new ArrayList<>();
 
     public LasersModel(String filename) throws FileNotFoundException {
@@ -58,10 +59,15 @@ public class LasersModel extends Observable implements Configuration {
 
         grid = new char[height][width];
 
-        lasers= new ArrayList<>();
+        lasers = new ArrayList<>();
+        pillars = new ArrayList<>();
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                grid[row][col] = in.next().charAt(0);
+                char temp = in.next().charAt(0);
+                grid[row][col] = temp;
+                if ("01234LX".indexOf(grid[row][col]) != -1) {
+                    pillars.add(new Coordinate(row, col));
+                }
             }
         }
         in.close();
@@ -71,15 +77,16 @@ public class LasersModel extends Observable implements Configuration {
 
     public LasersModel(LasersModel other) {
         this.width = other.width;
-        this.height = other.width;
+        this.height = other.height;
 
         this.grid = new char[width][width];
-        for (int row = 0; row < width; row++) {
+        for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
-        this.lasers=new ArrayList<>(other.lasers);
+        this.pillars = new ArrayList<>(other.pillars);
+        this.lasers = new ArrayList<>(other.lasers);
         this.currentCol = other.currentCol;
         this.currentRow = other.currentRow;
     }
@@ -491,15 +498,41 @@ public class LasersModel extends Observable implements Configuration {
 
     @Override
     public boolean isValid() {
-        boolean isStillValid = true;
-        for (Coordinate l : lasers) {
-            if (!checkBeams(l.getRow(), l.getCol())) {
-                isStillValid = false;
+
+        if(grid[currentRow][currentCol]==LASER){
+            if(!checkBeams(currentRow,currentCol)){
+                return false;
             }
         }
-        if((currentRow == height - 1 && currentCol == width - 1)) {
+
+        if("01234".indexOf(grid[currentRow][currentCol])!=-1){
+            int temp = Character.getNumericValue(grid[currentRow][currentCol]);
+            if (checkNeighbors(currentRow, currentCol) > temp) {
+                return false;
+            }
+        }
+
+        for (Coordinate l : lasers) {
+            if (!checkBeams(l.getRow(), l.getCol())) {
+                return false;
+            }
+        }
+
+        for (Coordinate p : pillars) {
+            if (grid[p.getRow()][p.getCol()] != 'X') {
+                int temp = Character.getNumericValue(grid[p.getRow()][p.getCol()]);
+                if (checkNeighbors(p.getRow(), p.getCol()) > temp) {
+                    return false;
+                }
+            }
+        }
+
+        if ((currentRow == height - 1 && currentCol == width - 1)) {
+
             for (int row = 0; row < width; row++) {
                 for (int col = 0; col < width; col++) {
+
+
                     if (grid[row][col] == EMPTY) {
                         return false;
                     }
@@ -517,7 +550,7 @@ public class LasersModel extends Observable implements Configuration {
 
 
         }
-        return isStillValid;
+        return true;
     }
 
     @Override
@@ -535,16 +568,20 @@ public class LasersModel extends Observable implements Configuration {
 
         width = Integer.parseInt(in.next());
         height = Integer.parseInt(in.next());
-
+        pillars = new ArrayList<>();
         grid = new char[height][width];
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                grid[row][col] = in.next().charAt(0);
+                char temp = in.next().charAt(0);
+                grid[row][col] = temp;
+                if ("01234LX".indexOf(grid[row][col]) != -1) {
+                    pillars.add(new Coordinate(row, col));
+                }
             }
         }
         in.close();
-        //lasers=new ArrayList<>();
+        lasers = new ArrayList<>();
         currentCol = 0;
         currentRow = 0;
     }
@@ -552,15 +589,16 @@ public class LasersModel extends Observable implements Configuration {
     public void replaceModel(LasersModel other) {
 
         this.width = other.width;
-        this.height = other.width;
+        this.height = other.height;
         this.grid = new char[width][width];
-        for (int row = 0; row < width; row++) {
+        for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
-        //this.lasers=other.lasers;
+        this.pillars = other.pillars;
+        this.lasers = other.lasers;
         this.currentCol = other.currentCol;
         this.currentRow = other.currentRow;
     }
-    }
+}
