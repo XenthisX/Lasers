@@ -51,9 +51,8 @@ public class LasersGUI extends Application implements Observer {
     private Text title;
     private int width;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
-    private IntegerProperty blues = new SimpleIntegerProperty(50);
-
     private IntegerProperty tilesSize = new SimpleIntegerProperty(10);
+
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -111,14 +110,10 @@ public class LasersGUI extends Application implements Observer {
         main.setAlignment(Pos.CENTER);
         stage.sizeToScene();
         stage.setScene(scene);
-        scene.widthProperty().addListener(ChangeListener -> reloadBoard());
-        scene.heightProperty().addListener(ChangeListener -> reloadBoard());
+        scene.widthProperty().addListener(ChangeListener -> updateBoard());
+        scene.heightProperty().addListener(ChangeListener -> updateBoard());
     }
 
-    private void reloadBoard() {
-        loadBoard(-1, -1);
-        width = model.getWidth();
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -135,11 +130,21 @@ public class LasersGUI extends Application implements Observer {
         updateBoard();
     }
 
+
+    /**
+     * Simple helper function that simply updates the beams and then reloads the game board
+     */
     private void updateBoard() {
         model.updateBeams();
+        width = model.getWidth();
         loadBoard(-1, -1);
     }
 
+    /**
+     * Function that creates the buttons, and returns an HBox containing them
+     *
+     * @return HBox node that contains all of the buttons
+     */
     private HBox createButtons() {
         HBox buttonBox = new HBox();
         buttonBox.setSpacing(2);
@@ -167,16 +172,18 @@ public class LasersGUI extends Application implements Observer {
             System.out.println(replacement);
             this.model.replaceModel(replacement);
             title.setText("Solved!");
-            loadBoard(-1,-1);
-        }else{
+            loadBoard(-1, -1);
+        } else {
 
             title.setText("This safe has no solution!");
         }
 
 
-
     }
 
+    /**
+     * Uses a backtracker to solve the puzzle, then chooses an item from the solutionList to display as a the next step
+     */
     private void hint() {
         Backtracker backtracker = new Backtracker(false);
         Optional temp = backtracker.solve(this.model);
@@ -184,10 +191,10 @@ public class LasersGUI extends Application implements Observer {
             LasersModel solution = (LasersModel) temp.get();
 
             ArrayList<Coordinate> solList = solution.getLasers();
-            for(Coordinate cord:solList){
-                if(!model.getLasers().contains(cord)){
-                    model.add(cord.getRow(),cord.getCol());
-                    title.setText("Hint: "+ title.getText());
+            for (Coordinate cord : solList) {
+                if (!model.getLasers().contains(cord)) {
+                    model.add(cord.getRow(), cord.getCol());
+                    title.setText("Hint: " + title.getText());
                     model.updateBeams();
                     return;
                 }
@@ -197,6 +204,10 @@ public class LasersGUI extends Application implements Observer {
         }
     }
 
+    /**
+     * Verification function that sends the coordinates received from the model to the loadBoard function which will
+     * then color the tile that was not verified
+     */
     private void verify() {
         model.verify();
         if (modelOut.startsWith("Error verifying at: (")) {
@@ -207,6 +218,10 @@ public class LasersGUI extends Application implements Observer {
         }
     }
 
+    /**
+     * Helper function responsible for loading a new board. Uses the model's updateModel function and the loadBoard
+     * function
+     */
     private void loadNew() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Safe File");
