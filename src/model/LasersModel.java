@@ -413,7 +413,7 @@ public class LasersModel extends Observable implements Configuration {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 if ("01234X".indexOf(grid[row][col]) == -1) {
-                    grid[row][col] = '.';
+                    grid[row][col] = EMPTY;
                 }
             }
         }

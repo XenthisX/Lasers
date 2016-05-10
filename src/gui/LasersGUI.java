@@ -159,11 +159,10 @@ public class LasersGUI extends Application implements Observer {
         Backtracker backtracker = new Backtracker(false);
         this.reset();
         Optional temp = backtracker.solve(this.model);
-        if (temp.isPresent() && temp.get() != null) {
-            System.out.println(temp.get());
-            this.model.replaceModel((LasersModel) temp.get());
-
-
+        if (temp.isPresent()) {
+            LasersModel replacement = (LasersModel) temp.get();
+            System.out.println(replacement);
+            this.model.replaceModel(replacement);
             loadBoard(-1,-1);
         }
 
