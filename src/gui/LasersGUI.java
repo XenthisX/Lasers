@@ -238,7 +238,7 @@ public class LasersGUI extends Application implements Observer {
 
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error on Load");
         }
 
     }
