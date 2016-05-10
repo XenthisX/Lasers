@@ -1,5 +1,6 @@
 package gui;
 
+import backtracking.Backtracker;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 /**
  * The main class that implements the JavaFX UI.   This class represents
@@ -143,6 +145,7 @@ public class LasersGUI extends Application implements Observer {
         Button hint = new Button("Hint");
         hint.setOnAction(MouseEvent -> hint());
         Button solve = new Button("Solve");
+        solve.setOnAction(MouseEvent -> solve());
         Button restart = new Button("Restart");
         restart.setOnAction(MouseEvent -> reset());
         Button load = new Button("Load");
@@ -150,6 +153,22 @@ public class LasersGUI extends Application implements Observer {
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
         buttonBox.autosize();
         return buttonBox;
+    }
+
+    private void solve() {
+        Backtracker backtracker = new Backtracker(false);
+        this.reset();
+        Optional temp = backtracker.solve(this.model);
+        if (temp.isPresent() && temp.get() != null) {
+            System.out.println(temp.get());
+            this.model.replaceModel((LasersModel) temp.get());
+
+
+            loadBoard(-1,-1);
+        }
+
+
+
     }
 
     private void hint() {

@@ -1,5 +1,7 @@
 package backtracking;
 
+import model.LasersModel;
+
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
@@ -15,7 +17,7 @@ public class SafeSolver {
             System.out.println("Usage: java SafeSolver safe.in debug");
         } else {
             // construct the initial configuration from the file
-            Configuration init = new SafeConfig(args[0]);
+            Configuration init = new LasersModel(args[0]);
 
             // create the backtracker with the debug flag
             boolean debug = args[1].equals("true");
