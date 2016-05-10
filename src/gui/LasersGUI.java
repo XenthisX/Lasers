@@ -26,14 +26,12 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import model.Coordinate;
 import model.LasersModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The main class that implements the JavaFX UI.   This class represents
@@ -163,7 +161,11 @@ public class LasersGUI extends Application implements Observer {
             LasersModel replacement = (LasersModel) temp.get();
             System.out.println(replacement);
             this.model.replaceModel(replacement);
+            title.setText("Solved!");
             loadBoard(-1,-1);
+        }else{
+
+            title.setText("This safe has no solution!");
         }
 
 
@@ -171,7 +173,23 @@ public class LasersGUI extends Application implements Observer {
     }
 
     private void hint() {
+        Backtracker backtracker = new Backtracker(false);
+        Optional temp = backtracker.solve(this.model);
+        if (temp.isPresent()) {
+            LasersModel solution = (LasersModel) temp.get();
 
+            ArrayList<Coordinate> solList = solution.getLasers();
+            for(Coordinate cord:solList){
+                if(!model.getLasers().contains(cord)){
+                    model.add(cord.getRow(),cord.getCol());
+                    title.setText("Hint: "+ title.getText());
+                    model.updateBeams();
+                    return;
+                }
+            }
+            title.setText("Hint: no next step!");
+
+        }
     }
 
     private void verify() {

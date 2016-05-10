@@ -46,7 +46,8 @@ public class LasersModel extends Observable implements Configuration {
     private int currentRow;
     private int currentCol;
 
-    private ArrayList<Coordinate> lasers = new ArrayList<>();
+    private ArrayList<Coordinate> lasers;
+    //private ArrayList<Coordinate> lasers=new ArrayList<>();
 
     public LasersModel(String filename) throws FileNotFoundException {
         Scanner in = null;
@@ -57,6 +58,7 @@ public class LasersModel extends Observable implements Configuration {
 
         grid = new char[height][width];
 
+        lasers= new ArrayList<>();
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 grid[row][col] = in.next().charAt(0);
@@ -70,12 +72,14 @@ public class LasersModel extends Observable implements Configuration {
     public LasersModel(LasersModel other) {
         this.width = other.width;
         this.height = other.width;
+
         this.grid = new char[width][width];
         for (int row = 0; row < width; row++) {
             for (int col = 0; col < width; col++) {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
+        this.lasers=new ArrayList<>(other.lasers);
         this.currentCol = other.currentCol;
         this.currentRow = other.currentRow;
     }
@@ -409,6 +413,10 @@ public class LasersModel extends Observable implements Configuration {
         return this.grid[row][col];
     }
 
+    public ArrayList<Coordinate> getLasers() {
+        return lasers;
+    }
+
     public void reset() {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -536,6 +544,7 @@ public class LasersModel extends Observable implements Configuration {
             }
         }
         in.close();
+        //lasers=new ArrayList<>();
         currentCol = 0;
         currentRow = 0;
     }
@@ -550,6 +559,7 @@ public class LasersModel extends Observable implements Configuration {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
+        //this.lasers=other.lasers;
         this.currentCol = other.currentCol;
         this.currentRow = other.currentRow;
     }

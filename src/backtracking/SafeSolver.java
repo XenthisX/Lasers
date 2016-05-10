@@ -36,6 +36,7 @@ public class SafeSolver {
             // indicate whether there was a solution, or not
             if (sol.isPresent()) {
                 System.out.println("Solution:\n" + sol.get());
+
             } else {
                 System.out.println("No solution!");
             }
