@@ -3,9 +3,11 @@ package gui;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
+
 /**
  * The RectangleGrid class extends rectangle and is responsible for holding a Row and Column where the rectangle is
- * located. It also holds an integer representing the color
+ * located.
+ * @author Elijah Bosley
  */
 class RectangleGrid extends Rectangle {
     private int row;

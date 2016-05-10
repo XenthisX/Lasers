@@ -8,8 +8,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Scanner;
-import java.util.stream.Collector;
 
+/**
+ * A model for the Lasers Puzzle. Contains many helper functions to assist with Backtracking and other useful MVC
+ * interactions
+ *
+ * @author Elijah Bosley
+ * @author Stefan Marchhart
+ */
 
 public class LasersModel extends Observable implements Configuration {
 
@@ -75,6 +81,10 @@ public class LasersModel extends Observable implements Configuration {
         currentRow = 0;
     }
 
+    /**
+     * Copy constructor used by getSuccessors
+     * @param other the model to copy from
+     */
     public LasersModel(LasersModel other) {
         this.width = other.width;
         this.height = other.height;
@@ -408,22 +418,43 @@ public class LasersModel extends Observable implements Configuration {
         notifyObservers();
     }
 
+    /**
+     * Getter for width
+     * @return the width of the grid
+     */
     public int getWidth() {
         return this.width;
     }
 
+    /**
+     * Getter for height
+     * @return the height of the grid
+     */
     public int getHeight() {
         return this.height;
     }
 
+    /**
+     * Getter for the character contained at row,col
+     * @param row the row of the grid to check
+     * @param col the column of the grid to check
+     * @return char pertaining to the value at grid[row][col]
+     */
     public char getGrid(int row, int col) {
         return this.grid[row][col];
     }
 
+    /**
+     * Returns an Arraylist of coordinates of the lasers in the grid
+     * @return Arraylist containing coordinate pairs for the location of the placed lasers
+     */
     public ArrayList<Coordinate> getLasers() {
         return lasers;
     }
 
+    /**
+     * Helper function that resets all lasers and beams to their default empty state
+     */
     public void reset() {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -555,13 +586,15 @@ public class LasersModel extends Observable implements Configuration {
 
     @Override
     public boolean isGoal() {
-        if (!(currentRow == height - 1 && currentCol == width - 1)) {
-            return false;
-        }
+        return currentRow == height - 1 && currentCol == width - 1;
 
-        return true;
     }
 
+    /**
+     * Updates the model using a new file, overwrites the configuration by reading in the new one
+     * @param filename the file to read in
+     * @throws FileNotFoundException
+     */
     public void updateModel(String filename) throws FileNotFoundException {
         Scanner in;
         in = new Scanner(new File(filename));
@@ -586,6 +619,10 @@ public class LasersModel extends Observable implements Configuration {
         currentRow = 0;
     }
 
+    /**
+     * Another copy constructor, but instead of making a new instance simply updates the old one
+     * @param other the model to copy from
+     */
     public void replaceModel(LasersModel other) {
 
         this.width = other.width;
