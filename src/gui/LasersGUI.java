@@ -79,7 +79,7 @@ public class LasersGUI extends Application implements Observer {
 
         width = model.getWidth();
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
-        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(width * 3));
+        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
         stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 3);
         stage.setWidth(stage.getHeight());
 
