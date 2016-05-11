@@ -51,6 +51,26 @@ public class LasersGUI extends Application implements Observer {
     private Double[] windowSize;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
     private double tileSize = 20.0;
+
+    /**
+     * The following private state is used for theming.
+     */
+    private Color pillarFontColor;
+    private String pillarFont;
+    private Color verifyErrorColor;
+    private Color pillarColor;
+    private Color laserColor;
+    private Color emitterColor;
+    private Color backgroundTileColor;
+    private String pillarImage;
+    private String beamImage;
+    private String emitterImage;
+
+    /**
+     * Initialized the board, and creates the basic setup
+     *
+     * @throws Exception
+     */
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -72,6 +92,21 @@ public class LasersGUI extends Application implements Observer {
      * @param stage the stage to add UI components into
      */
     private void init(Stage stage) {
+
+        /**
+         * Initialize theme
+         */
+        pillarFontColor = Color.WHITE;
+        pillarFont = "Arial";
+        verifyErrorColor = Color.RED;
+        pillarColor = Color.BLACK;
+        laserColor = Color.YELLOW;
+        emitterColor = Color.ORANGE;
+        backgroundTileColor = Color.LIGHTGRAY;
+        pillarImage = "gui/resources/blank.png";
+        beamImage = "gui/resources/beam2.png";
+        emitterImage = "gui/resources/laser2.png";
+
         VBox main = new VBox();
         Scene scene = new Scene(main);
 
@@ -179,7 +214,14 @@ public class LasersGUI extends Application implements Observer {
 
     private HBox themeButtons(Stage stage) {
         HBox themes = new HBox();
+        Button basic = new Button("Basic Theme");
+        basic.setOnAction(MouseEvent -> setBasicTheme());
+        Button tron = new Button("Tron");
         return themes;
+    }
+
+    private void setBasicTheme() {
+
     }
 
     /**
@@ -302,16 +344,19 @@ public class LasersGUI extends Application implements Observer {
                 rect.setSmooth(true);
                 /** Setup text */
                 Text text = new Text("");
-                text.setFill(Color.WHITE);
-                text.setFont(new Font("Arial", tileSize - 5));
+                text.setFill(pillarFontColor);
+                text.setFont(new Font(pillarFont, tileSize - 5));
                 text.setBoundsType(TextBoundsType.VISUAL);
 
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
                     if (row == rowS && col == colS) {
-                        background.setFill(Color.RED);
+                        background.setFill(verifyErrorColor);
                     } else {
-                        background.setFill(Color.BLACK);
+                        background.setFill(pillarColor);
                     }
+                    Image pillar = new Image(pillarImage);
+                    ImagePattern fill = new ImagePattern(pillar);
+                    rect.setFill(fill);
                     if (this.model.getGrid(row, col) != 'X') {
                         text.setText(this.model.getGrid(row, col) + "");
                     }
@@ -320,28 +365,28 @@ public class LasersGUI extends Application implements Observer {
                 } else { // it's either a laser or a beam
                     if (this.model.getGrid(row, col) == '*') {
                         if (row == rowS && col == colS) {
-                            background.setFill(Color.RED);
+                            background.setFill(verifyErrorColor);
                         } else {
-                            background.setFill(Color.YELLOW);
+                            background.setFill(laserColor);
                         }
-                        Image beam = new Image("gui/resources/beam2.png");
+                        Image beam = new Image(beamImage);
                         ImagePattern fill = new ImagePattern(beam);
                         rect.setFill(fill);
 
                     } else if (this.model.getGrid(row, col) == 'L') {
                         if (row == rowS && col == colS) {
-                            background.setFill(Color.RED);
+                            background.setFill(verifyErrorColor);
                         } else {
-                            background.setFill(Color.ORANGE);
+                            background.setFill(emitterColor);
                         }
-                        Image laser = new Image("gui/resources/laser2.png");
+                        Image laser = new Image(emitterImage);
                         ImagePattern fill = new ImagePattern(laser);
                         rect.setFill(fill);
                     } else {
                         if (row == rowS && col == colS) {
-                            background.setFill(Color.RED);
+                            background.setFill(verifyErrorColor);
                         } else {
-                            background.setFill(Color.LIGHTGRAY);
+                            background.setFill(backgroundTileColor);
                         }
                     }
 
