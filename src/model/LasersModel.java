@@ -524,7 +524,7 @@ public class LasersModel extends Observable implements Configuration {
         if(currentRow > height) {
             return new ArrayList<Configuration>();
         }
-        System.out.println(currentCol + " " + currentRow);
+        //System.out.println(currentCol + " " + currentRow);
 
 
 
