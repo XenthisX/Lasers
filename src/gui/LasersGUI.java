@@ -221,7 +221,17 @@ public class LasersGUI extends Application implements Observer {
     }
 
     private void setBasicTheme() {
-
+        pillarFontColor = Color.WHITE;
+        pillarFont = "Arial";
+        verifyErrorColor = Color.RED;
+        pillarColor = Color.BLACK;
+        laserColor = Color.YELLOW;
+        emitterColor = Color.ORANGE;
+        backgroundTileColor = Color.LIGHTGRAY;
+        pillarImage = "gui/resources/blank.png";
+        beamImage = "gui/resources/beam2.png";
+        emitterImage = "gui/resources/laser2.png";
+        loadBoard(-1, -1);
     }
 
     /**
@@ -414,13 +424,13 @@ public class LasersGUI extends Application implements Observer {
         RectangleGrid rect = (RectangleGrid) stack.getChildren().get(1);
         Character curr = this.model.getGrid(rect.getRow(), rect.getCol());
         if (curr == 'L') {
-            //ImageView background = (ImageView) stack.getChildren().get(0);
+
             this.model.remove(rect.getRow(), rect.getCol());
-            rect.setFill(Color.LIGHTGRAY);
+            rect.setFill(backgroundTileColor);
         } else if (curr == '.' || curr == '*') {
-            //ImageView background = (ImageView) stack.getChildren().get(0);
+
             this.model.add(rect.getRow(), rect.getCol());
-            Image laser = new Image("gui/resources/laser.png");
+            Image laser = new Image(emitterImage);
             ImagePattern fill = new ImagePattern(laser);
             rect.setFill(fill);
 
