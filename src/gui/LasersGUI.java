@@ -4,9 +4,7 @@ import backtracking.Backtracker;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -53,7 +51,6 @@ public class LasersGUI extends Application implements Observer {
     private Double[] windowSize;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
     private double tileSize = 20.0;
-    private boolean solved=false;
     @Override
     public void init() throws Exception {
         // the init method is run before start.  the file name is extracted
@@ -95,6 +92,7 @@ public class LasersGUI extends Application implements Observer {
         title.managedProperty().bind(title.visibleProperty());
         title.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
         title.setTextAlignment(TextAlignment.CENTER);
+
         /** Set up grid */
         board = new GridPane();
         board.setVgap(5);
@@ -158,6 +156,7 @@ public class LasersGUI extends Application implements Observer {
      */
     private HBox createButtons(Stage stage) {
         HBox buttonBox = new HBox();
+        buttonBox.setMaxSize(Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
         buttonBox.setSpacing(2);
         Button check = new Button("Check");
         check.setOnAction(MouseEvent -> verify());
@@ -176,9 +175,6 @@ public class LasersGUI extends Application implements Observer {
 
     private void solve() {
 
-        //if (!solved){
-
-
         Backtracker backtracker = new Backtracker(false);
         this.reset();
         Optional temp = backtracker.solve(this.model);
@@ -191,9 +187,6 @@ public class LasersGUI extends Application implements Observer {
 
             title.setText("This safe has no solution!");
         }
-
-            solved=true;
-        //}
 
     }
 
@@ -255,7 +248,6 @@ public class LasersGUI extends Application implements Observer {
             board.getChildren().clear();
             this.model.updateModel(filename);
             model.updateBeams();
-            solved=false;
             resizeWindows(stage);
             loadBoard(-1, -1);
 
@@ -270,7 +262,6 @@ public class LasersGUI extends Application implements Observer {
      * Function to reset the board, called when the restart button is pressed.
      */
     private void reset() {
-        solved=false;
         model.reset();
         loadBoard(-1, -1);
     }
