@@ -95,4 +95,13 @@ public class LasersPTUI implements Observer {
         }
         return result;
     }
+    public static void displayHelp() {
+            System.out.println("a|add r c: Add laser to (r,c)");
+            System.out.println("d|display: Display safe");
+            System.out.println("h|help: Print this help message");
+            System.out.println("q|quit: Exit program");
+            System.out.println("r|remove r c: Remove laser from (r,c)");
+            System.out.println("v|verify: Verify safe correctness");
+
+    }
 }

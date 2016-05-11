@@ -655,4 +655,8 @@ public class LasersModel extends Observable implements Configuration {
         this.currentRow = other.currentRow;
 
     }
+
+    private void displayHelp() {
+        notifyObservers("");
+    }
 }

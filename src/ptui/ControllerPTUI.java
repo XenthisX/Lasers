@@ -90,7 +90,7 @@ public class ControllerPTUI {
         } else if (command.equals("d") || command.equals("display")) {
             model.announceChange();
         } else if (command.equals("h") || command.equals("help")) {
-            //displayHelp();
+            LasersPTUI.displayHelp();
         } else if (command.equals("q") || command.equals("quit")) {
             this.model.quit();
         } else if (command.equals("r") || command.equals("remove")) {
@@ -108,4 +108,6 @@ public class ControllerPTUI {
             System.out.println("Unrecognized command: " + str);
         }
     }
+
+
 }
