@@ -37,7 +37,7 @@ import java.util.*;
  * and receives updates from it.
  *
  * @author Sean Strout @ RIT CS
- * @author Elijah Bosley, Stefan Marchart
+ * @author Elijah Bosley, Stefan Marchhart
  */
 public class LasersGUI extends Application implements Observer {
     /**
@@ -141,6 +141,10 @@ public class LasersGUI extends Application implements Observer {
         loadBoard(-1, -1);
     }
 
+    /**
+     * Handles resizing window when the GUI's size is changed
+     * @param stage the stage, used to find the height and width
+     */
     private void resizeWindows(Stage stage) {
         width = model.getWidth();
         windowSize[0] = stage.getWidth();
@@ -173,8 +177,15 @@ public class LasersGUI extends Application implements Observer {
         return buttonBox;
     }
 
-    private void solve() {
+    private HBox themeButtons(Stage stage) {
+        HBox themes = new HBox();
+        return themes;
+    }
 
+    /**
+     * Solves the board and replaces with the solved configuration.
+     */
+    private void solve() {
         Backtracker backtracker = new Backtracker(false);
         this.reset();
         Optional temp = backtracker.solve(this.model);
