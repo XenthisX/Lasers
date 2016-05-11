@@ -473,7 +473,8 @@ public class LasersModel extends Observable implements Configuration {
                 }
             }
         }
-
+        currentCol = -1;
+        currentRow = 0;
         lasers = new ArrayList<>();
     }
 
@@ -627,7 +628,7 @@ public class LasersModel extends Observable implements Configuration {
         }
         in.close();
         lasers = new ArrayList<>();
-        currentCol = 0;
+        currentCol = -1;
         currentRow = 0;
 
     }

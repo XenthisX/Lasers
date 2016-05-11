@@ -166,7 +166,7 @@ public class LasersGUI extends Application implements Observer {
 
     private void solve() {
 
-        if (!solved){
+        //if (!solved){
 
 
         Backtracker backtracker = new Backtracker(false);
@@ -184,7 +184,7 @@ public class LasersGUI extends Application implements Observer {
         }
 
             solved=true;
-        }
+        //}
 
     }
 
@@ -201,9 +201,9 @@ public class LasersGUI extends Application implements Observer {
         if (temp.isPresent()) {
             LasersModel solution = (LasersModel) temp.get();
 
-            
-
             ArrayList<Coordinate> solList = solution.getLasers();
+
+
             for (Coordinate cord : solList) {
                 if (!model.getLasers().contains(cord)) {
                     model.add(cord.getRow(), cord.getCol());
@@ -214,10 +214,8 @@ public class LasersGUI extends Application implements Observer {
                 title.setText("Hint: no next step!");
             }
 
-
-
-
-
+        }else{
+            title.setText("Hint: no next step!");
         }
     }
 
