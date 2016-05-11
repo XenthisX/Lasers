@@ -10,10 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -65,6 +62,7 @@ public class LasersGUI extends Application implements Observer {
     private String pillarImage;
     private String beamImage;
     private String emitterImage;
+    private int fontSizeReduction;
 
     /**
      * Initialized the board, and creates the basic setup
@@ -106,8 +104,10 @@ public class LasersGUI extends Application implements Observer {
         pillarImage = "gui/resources/blank.png";
         beamImage = "gui/resources/beam2.png";
         emitterImage = "gui/resources/laser2.png";
+        fontSizeReduction = 5;
 
         VBox main = new VBox();
+        main.setBackground(Background.EMPTY);
         Scene scene = new Scene(main);
 
         width = model.getWidth();
@@ -121,12 +121,13 @@ public class LasersGUI extends Application implements Observer {
 
         /** Set up title */
         title = new Text("Welcome to the LasersGUI");
-        title.setFont(new Font("Helvectiva", fontSize.doubleValue()));
+        title.setFont(new Font(pillarFont, fontSize.doubleValue()));
         title.wrappingWidthProperty().bind(scene.widthProperty());
         main.getChildren().add(title);
         title.managedProperty().bind(title.visibleProperty());
         title.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
         title.setTextAlignment(TextAlignment.CENTER);
+
 
         /** Set up grid */
         board = new GridPane();
@@ -134,7 +135,9 @@ public class LasersGUI extends Application implements Observer {
         board.setHgap(5);
         loadBoard(-1, -1);
         board.setAlignment(Pos.CENTER);
+        board.backgroundProperty().setValue(Background.EMPTY);
         main.getChildren().add(board);
+
 
         /** Add buttons */
         HBox buttons = createButtons(stage);
@@ -142,9 +145,18 @@ public class LasersGUI extends Application implements Observer {
         main.getChildren().add(buttons);
         buttons.setPadding(new Insets(10, 0, 0, 0));
 
+        /** Add theme support */
+        HBox themes = themeButtons(scene);
+        themes.setAlignment(Pos.CENTER);
+        themes.setPadding(new Insets(10, 0, 0, 0));
+        main.getChildren().add(themes);
+
+
         /** Initialize stage */
         main.setPadding(new Insets(10, 10, 10, 10));
         main.setAlignment(Pos.CENTER);
+
+
         //stage.sizeToScene();
         stage.setScene(scene);
         scene.widthProperty().addListener(ChangeListener -> resizeWindows(stage));
@@ -212,17 +224,42 @@ public class LasersGUI extends Application implements Observer {
         return buttonBox;
     }
 
-    private HBox themeButtons(Stage stage) {
+    private HBox themeButtons(Scene scene) {
         HBox themes = new HBox();
         Button basic = new Button("Basic Theme");
-        basic.setOnAction(MouseEvent -> setBasicTheme());
+        basic.setOnAction(MouseEvent -> setBasicTheme(scene));
         Button tron = new Button("Tron");
+        tron.setOnAction(MouseEvent -> setTronTheme(scene));
+        themes.getChildren().addAll(basic, tron);
         return themes;
     }
 
-    private void setBasicTheme() {
+    private void setTronTheme(Scene scene) {
+        Image fill = new Image("gui/resources/tron/tron_background.jpg");
+        ImagePattern filler = new ImagePattern(fill);
+        scene.setFill(filler);
+        pillarFontColor = Color.WHITE;
+        pillarFont = "Courier New";
+        title.setFont(new Font(pillarFont, fontSize.doubleValue()));
+        fontSizeReduction = 50;
+        verifyErrorColor = Color.ORANGERED;
+        pillarColor = Color.STEELBLUE;
+        laserColor = Color.LIGHTBLUE;
+        emitterColor = Color.LIGHTBLUE;
+        backgroundTileColor = Color.SLATEGRAY;
+        pillarImage = "gui/resources/tron/tron_pillar.png";
+        beamImage = "gui/resources/tron/tron_beam.png";
+        emitterImage = "gui/resources/tron/tron_emitter.png";
+        title.setFill(Color.ORANGERED);
+        loadBoard(-1, -1);
+    }
+
+    private void setBasicTheme(Scene scene) {
+        scene.setFill(Color.WHITE);
         pillarFontColor = Color.WHITE;
         pillarFont = "Arial";
+        title.setFont(new Font(pillarFont, fontSize.doubleValue()));
+        fontSizeReduction = 5;
         verifyErrorColor = Color.RED;
         pillarColor = Color.BLACK;
         laserColor = Color.YELLOW;
@@ -231,6 +268,8 @@ public class LasersGUI extends Application implements Observer {
         pillarImage = "gui/resources/blank.png";
         beamImage = "gui/resources/beam2.png";
         emitterImage = "gui/resources/laser2.png";
+        title.setFill(Color.BLACK);
+
         loadBoard(-1, -1);
     }
 
@@ -327,6 +366,7 @@ public class LasersGUI extends Application implements Observer {
     private void reset() {
         model.reset();
         loadBoard(-1, -1);
+        title.setText("The safe has been reset");
     }
 
     /**
@@ -355,7 +395,7 @@ public class LasersGUI extends Application implements Observer {
                 /** Setup text */
                 Text text = new Text("");
                 text.setFill(pillarFontColor);
-                text.setFont(new Font(pillarFont, tileSize - 5));
+                text.setFont(new Font(pillarFont, tileSize - fontSizeReduction));
                 text.setBoundsType(TextBoundsType.VISUAL);
 
                 if ("01234X".indexOf(this.model.getGrid(row, col)) != -1) { // if it's a black tile
