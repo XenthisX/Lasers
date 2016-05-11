@@ -50,8 +50,9 @@ public class LasersGUI extends Application implements Observer {
     private GridPane board;
     private Text title;
     private int width;
+    private Double[] windowSize;
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
-    private IntegerProperty tilesSize = new SimpleIntegerProperty(10);
+    private double tileSize = 20.0;
     private boolean solved=false;
     @Override
     public void init() throws Exception {
@@ -78,11 +79,13 @@ public class LasersGUI extends Application implements Observer {
         Scene scene = new Scene(main);
 
         width = model.getWidth();
+        tileSize = 10;
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
-        tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
         stage.setHeight(Screen.getPrimary().getBounds().getHeight()/ 2);
         stage.setWidth(stage.getHeight());
-
+        windowSize = new Double[2];
+        windowSize[0] = stage.getWidth();
+        windowSize[1] = stage.getHeight();
 
         /** Set up title */
         title = new Text("Welcome to the LasersGUI");
@@ -101,7 +104,7 @@ public class LasersGUI extends Application implements Observer {
         main.getChildren().add(board);
 
         /** Add buttons */
-        HBox buttons = createButtons();
+        HBox buttons = createButtons(stage);
         buttons.setAlignment(Pos.CENTER);
         main.getChildren().add(buttons);
         buttons.setPadding(new Insets(10, 0, 0, 0));
@@ -111,8 +114,8 @@ public class LasersGUI extends Application implements Observer {
         main.setAlignment(Pos.CENTER);
         //stage.sizeToScene();
         stage.setScene(scene);
-        scene.widthProperty().addListener(ChangeListener -> updateBoard());
-        scene.heightProperty().addListener(ChangeListener -> updateBoard());
+        scene.widthProperty().addListener(ChangeListener -> resizeWindows(stage));
+        scene.heightProperty().addListener(ChangeListener -> resizeWindows(stage));
     }
 
 
@@ -137,7 +140,14 @@ public class LasersGUI extends Application implements Observer {
      */
     private void updateBoard() {
         model.updateBeams();
+        loadBoard(-1, -1);
+    }
+
+    private void resizeWindows(Stage stage) {
         width = model.getWidth();
+        windowSize[0] = stage.getWidth();
+        windowSize[1] = stage.getHeight();
+        tileSize = Double.min((windowSize[0]/(model.getWidth() * 2)),(windowSize[1] / (model.getHeight() * 2)));
         loadBoard(-1, -1);
     }
 
@@ -146,7 +156,7 @@ public class LasersGUI extends Application implements Observer {
      *
      * @return HBox node that contains all of the buttons
      */
-    private HBox createButtons() {
+    private HBox createButtons(Stage stage) {
         HBox buttonBox = new HBox();
         buttonBox.setSpacing(2);
         Button check = new Button("Check");
@@ -158,7 +168,7 @@ public class LasersGUI extends Application implements Observer {
         Button restart = new Button("Restart");
         restart.setOnAction(MouseEvent -> reset());
         Button load = new Button("Load");
-        load.setOnAction(MouseEvent -> loadNew());
+        load.setOnAction(MouseEvent -> loadNew(stage));
         buttonBox.getChildren().addAll(check, hint, solve, restart, load);
         buttonBox.autosize();
         return buttonBox;
@@ -174,7 +184,6 @@ public class LasersGUI extends Application implements Observer {
         Optional temp = backtracker.solve(this.model);
         if (temp.isPresent()) {
             LasersModel replacement = (LasersModel) temp.get();
-            System.out.println(replacement);
             this.model.replaceModel(replacement);
             title.setText("Solved!");
             loadBoard(-1, -1);
@@ -194,9 +203,6 @@ public class LasersGUI extends Application implements Observer {
     private void hint() {
         Backtracker backtracker = new Backtracker(false);
         Optional temp = backtracker.solve(this.model);
-
-
-
 
         if (temp.isPresent()) {
             LasersModel solution = (LasersModel) temp.get();
@@ -237,7 +243,7 @@ public class LasersGUI extends Application implements Observer {
      * Helper function responsible for loading a new board. Uses the model's updateModel function and the loadBoard
      * function
      */
-    private void loadNew() {
+    private void loadNew(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Safe File");
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
@@ -250,6 +256,7 @@ public class LasersGUI extends Application implements Observer {
             this.model.updateModel(filename);
             model.updateBeams();
             solved=false;
+            resizeWindows(stage);
             loadBoard(-1, -1);
 
 
@@ -279,8 +286,7 @@ public class LasersGUI extends Application implements Observer {
 
         for (int row = 0; row < this.model.getHeight(); row++) {
             for (int col = 0; col < this.model.getWidth(); col++) {
-                int tileSize = tilesSize.getValue();
-                int arc = tileSize / 3;
+                double arc = tileSize / 3;
                 StackPane stack = new StackPane();
                 /** Setup background fill */
                 Rectangle background = new Rectangle(tileSize, tileSize, Color.LIGHTGRAY);
