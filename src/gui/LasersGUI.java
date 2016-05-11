@@ -80,8 +80,9 @@ public class LasersGUI extends Application implements Observer {
         width = model.getWidth();
         fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
         tilesSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
-        stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 3);
+        stage.setHeight(Screen.getPrimary().getBounds().getHeight()/ 2);
         stage.setWidth(stage.getHeight());
+
 
         /** Set up title */
         title = new Text("Welcome to the LasersGUI");
@@ -108,7 +109,7 @@ public class LasersGUI extends Application implements Observer {
         /** Initialize stage */
         main.setPadding(new Insets(10, 10, 10, 10));
         main.setAlignment(Pos.CENTER);
-        stage.sizeToScene();
+        //stage.sizeToScene();
         stage.setScene(scene);
         scene.widthProperty().addListener(ChangeListener -> updateBoard());
         scene.heightProperty().addListener(ChangeListener -> updateBoard());

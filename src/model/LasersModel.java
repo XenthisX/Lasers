@@ -40,7 +40,7 @@ public class LasersModel extends Observable implements Configuration {
     /**
      * The width of the Laser Room
      */
-    private char[][] initalGrid;
+
     private int width;
     /**
      * The height of the Laser Room
@@ -61,7 +61,7 @@ public class LasersModel extends Observable implements Configuration {
         width = Integer.parseInt(in.next());
         height = Integer.parseInt(in.next());
 
-        initalGrid = new char[height][width];
+
         grid = new char[height][width];
 
         lasers = new ArrayList<>();
@@ -70,7 +70,7 @@ public class LasersModel extends Observable implements Configuration {
             for (int col = 0; col < width; col++) {
                 char temp = in.next().charAt(0);
                 grid[row][col] = temp;
-                initalGrid[row][col] = temp;
+
                 if ("01234LX".indexOf(grid[row][col]) != -1) {
                     pillars.add(new Coordinate(row, col));
                 }
@@ -96,7 +96,7 @@ public class LasersModel extends Observable implements Configuration {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
-        this.initalGrid = other.initalGrid;
+
         this.pillars = new ArrayList<>(other.pillars);
         this.lasers = new ArrayList<>(other.lasers);
         this.currentCol = other.currentCol;
@@ -473,6 +473,7 @@ public class LasersModel extends Observable implements Configuration {
                 }
             }
         }
+
         lasers = new ArrayList<>();
     }
 
@@ -524,17 +525,16 @@ public class LasersModel extends Observable implements Configuration {
         if(currentRow > height) {
             return new ArrayList<Configuration>();
         }
-        //System.out.println(currentCol + " " + currentRow);
 
 
 
         ArrayList<Configuration> configList = new ArrayList<>();
         LasersModel model1 = new LasersModel(this);
-        model1.updateBeams();
+
         if(model1.add(currentRow, currentCol)) {
+            model1.updateBeams();
             configList.add(model1);
         }
-
         LasersModel model2 = new LasersModel(this);
         model2.updateBeams();
         configList.add(model2);
@@ -615,7 +615,7 @@ public class LasersModel extends Observable implements Configuration {
         height = Integer.parseInt(in.next());
         pillars = new ArrayList<>();
         grid = new char[height][width];
-        initalGrid = new char[height][width];
+
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 char temp = in.next().charAt(0);
@@ -647,13 +647,7 @@ public class LasersModel extends Observable implements Configuration {
                 this.grid[row][col] = other.grid[row][col];
             }
         }
-        this.initalGrid = new char[height][width];
 
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                this.initalGrid[row][col] = other.initalGrid[row][col];
-            }
-        }
         this.pillars = other.pillars;
         this.lasers = other.lasers;
         this.currentCol = other.currentCol;
